@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valória — Seu Servidor Minecraft</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Jost:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo"> 
+        <img src="assets/images/logo.png" alt="Valória" />
+      </div>
+      <nav class="nav">
+        <a href="#galeria">Galeria</a>
+        <a href="#mecanicas">Dinâmica</a>
+        <a href="#equipe">Equipe</a>
+        <a href="#ip">Conectar</a>
+        <a class="btn btn-ghost" href="https://discord.gg/P8uW6arHt" target="_blank">Discord</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero animate-on-scroll" id="home" aria-label="Hero">
+      <div class="cinematic-banner" aria-hidden="true">
+        <img id="heroBackdrop" src="assets/images/banner-cinematic.jpg" alt="Banner cinematográfico do mundo Valória"/>
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content container">
+        <span class="hero-badge">Servidor medieval-fantasia premium</span>
+        <img class="hero-logo" src="assets/images/logo-gold.png" alt="Valória logo" />
+        <h1 class="hero-title">Sua jornada começa aqui.</h1>
+        <p class="hero-sub">Descubra castelos lendários, florestas encantadas e dungeons únicas em um mundo criado para aventuras épicas.</p>
+        <div class="hero-highlight-bar" aria-hidden="true">
+          <span>Castelos lendários</span>
+          <span>Eventos épicos</span>
+          <span>Missões únicas</span>
+        </div>
+        <div class="hero-meta">
+          <div><strong>IP:</strong> Valoria.play.srv.br</div>
+          <div><strong>Porta:</strong> 25465</div>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" id="playNow" href="#ip">Jogar Agora</a>
+          <a class="btn btn-secondary" href="#galeria">Ver Galeria</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria -->
+    <section id="galeria" class="section gallery container">
+      <h2>Galeria do Servidor</h2>
+      <p class="section-intro">A galeria está em manutenção enquanto aguardamos suas imagens oficiais. Em breve colocaremos os visuais reais de Valória aqui.</p>
+      <div class="gallery-maintenance">
+        <div class="maintenance-icon">🛠️</div>
+        <h3>Galeria em manutenção</h3>
+        <p>Estamos preparando um espaço premium para suas screenshots e artes do servidor. Assim que você enviar as fotos, elas serão exibidas aqui com estilo cinematográfico.</p>
+        <span class="maintenance-note">Envie suas imagens e deixe a galeria pronta para impressionar.</span>
+      </div>
+    </section>
+
+    <!-- Dinâmica do Servidor -->
+    <section id="mecanicas" class="section container features">
+      <h2>Dinâmica do Servidor</h2>
+      <p class="section-intro">Cada sistema de Valória foi criado para manter sua experiência intensa, equilibrada e cheia de emoção, com conteúdo para aventureiros solo e grupos.</p>
+      <div class="features-grid">
+        <article class="card">
+          <div class="card-icon">🏹</div>
+          <h3>Missões</h3>
+          <p>Séries de missões épicas com enredos, recompensas e progressão.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🗺️</div>
+          <h3>Dungeons</h3>
+          <p>Dungeons desafiadoras com bosses e loot raríssimo.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">💰</div>
+          <h3>Economia</h3>
+          <p>Mercados, leilões e sistema econômico balanceado.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">⬆️</div>
+          <h3>Progressão</h3>
+          <p>Sistema de classes, habilidades e progressão por níveis.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">📆</div>
+          <h3>Eventos Semanais</h3>
+          <p>Eventos regulares com ranking e recompensas exclusivas.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">⚔️</div>
+          <h3>PvE & PvP</h3>
+          <p>Experiências balanceadas para todos os estilos de jogo.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Equipe -->
+    <section id="equipe" class="section container team">
+      <h2>Equipe</h2>
+      <div class="team-grid">
+        <div class="team-card animate-on-scroll">
+          <img src="assets/images/evan.jpg" alt="Evan">
+          <h4>Evan</h4>
+          <p>Admin Geral — organização, estrutura e liderança.</p>
+          <div class="team-links"><a href="#">Discord</a></div>
+        </div>
+        <div class="team-card animate-on-scroll">
+          <img src="assets/images/frosth.jpg" alt="Frosth">
+          <h4>Frosth</h4>
+          <p>Moderador — suporte e ordem no servidor.</p>
+          <div class="team-links"><a href="#">Discord</a></div>
+        </div>
+        <div class="team-card animate-on-scroll">
+          <img src="assets/images/blackfenix.jpg" alt="Blackfenix">
+          <h4>Blackfenix</h4>
+          <p>Desenvolvedor e Mídia — tecnologia, conteúdo e comunicação.</p>
+          <div class="team-links"><a href="#">Discord</a></div>
+        </div>
+        <div class="team-card animate-on-scroll">
+          <img src="assets/images/lorzin.jpg" alt="Lorzin">
+          <h4>Lorzin</h4>
+          <p>Construtor e Moderador — eventos, builds e organização.</p>
+          <div class="team-links"><a href="#">Discord</a></div>
+        </div>
+        <div class="team-card animate-on-scroll">
+          <img src="assets/images/slash.jpg" alt="Slash">
+          <h4>Slash</h4>
+          <p>Construtor — criação de estruturas e ambientes incríveis.</p>
+          <div class="team-links"><a href="#">Discord</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IP e Status -->
+    <section id="ip" class="section container status">
+      <h2>Conectar a Valória</h2>
+      <div class="status-panel">
+        <div class="server-info">
+          <div class="ip-block">
+            <div class="ip-label">IP</div>
+            <div class="ip-value">Valoria.play.srv.br</div>
+            <div class="port">Porta: <strong>25465</strong></div>
+            <button class="btn" id="copyIp">Copiar IP</button>
+          </div>
+          <div class="live-status">
+            <div>Status: <span id="serverStatus">Verificando...</span></div>
+            <div>Jogadores online: <span id="playerCount">—</span></div>
+          </div>
+        </div>
+        <div class="status-cta">
+          <p class="connect-msg">Conecte-se agora e comece sua aventura em Valória!</p>
+          <a class="btn btn-primary" href="#">Jogar Agora</a>
+          <a class="btn btn-ghost" href="https://discord.gg/P8uW6arHt" target="_blank">Entrar no Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feedback e Suporte -->
+    <section id="suporte" class="section container contact">
+      <h2>Feedback, Denúncias e Suporte</h2>
+      <p class="section-intro">Use este espaço para enviar sugestões, relatar problemas ou denúncias. Estamos atentos para manter o servidor seguro e a comunidade saudável.</p>
+      <div class="contact-grid">
+        <div class="support-panel">
+          <div class="support-highlight">
+            <div class="support-badge">Canal oficial</div>
+            <h3>Precisa de ajuda rápida?</h3>
+            <p>Envie sua denúncia ou feedback diretamente pelo Discord. A equipe monitora os canais oficiais diariamente.</p>
+          </div>
+          <div class="support-list">
+            <article>
+              <h4>Denúncias</h4>
+              <p>Relate comportamentos tóxicos, exploits ou bugs críticos com detalhes claros e data/hora.</p>
+            </article>
+            <article>
+              <h4>Feedback</h4>
+              <p>Conte-nos o que você mais gosta no servidor e o que gostaria de ver melhorado.</p>
+            </article>
+            <article>
+              <h4>Suporte</h4>
+              <p>Problemas técnicos com conexão, bugs ou dúvidas sobre regras e eventos.</p>
+            </article>
+          </div>
+          <a class="btn btn-primary support-cta" href="https://discord.gg/P8uW6arHt" target="_blank">Abrir Discord</a>
+        </div>
+
+        <form id="contactForm" class="contact-form">
+          <label>Nome<input name="name" placeholder="Seu nome ou nickname" required></label>
+          <label>Email<input type="email" name="email" placeholder="seu@exemplo.com" required></label>
+          <label>Assunto<select name="subject" required>
+              <option value="">Selecione</option>
+              <option value="feedback">Feedback</option>
+              <option value="denuncia">Denúncia</option>
+              <option value="suporte">Suporte técnico</option>
+            </select></label>
+          <label>Mensagem<textarea name="message" rows="6" placeholder="Descreva o que aconteceu, anexos não são enviados aqui." required></textarea></label>
+          <div class="form-actions feedback-actions">
+            <button class="btn btn-primary" type="submit">Enviar mensagem</button>
+            <a class="btn btn-ghost" href="#suporte">Ver instruções</a>
+          </div>
+          <p class="feedback-note">Dica: quanto mais informações você fornecer, mais rápido podemos responder.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left"><img src="assets/images/logo-footer.png" alt="Valória"><p>© Valória — Todos os direitos reservados.</p></div>
+      <div class="footer-links"><a href="https://discord.gg/P8uW6arHt">Discord</a> • <a href="#">Política de Privacidade</a> • <a href="#">Termos de Uso</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
