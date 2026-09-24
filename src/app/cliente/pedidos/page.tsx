@@ -1,0 +1,9 @@
+import { db } from "@/lib/db"; import { getSession } from "@/lib/auth"; export const dynamic = "force-dynamic";
+const ST: Record<string,string> = {PENDING:"Pendente",APPROVED:"Pago",PROCESSING:"Processando",COMPLETED:"Concluído",CANCELED:"Cancelado"};
+export default async function Pedidos({searchParams}:{searchParams:{order?:string}}){
+  const s = (await getSession())!, os = await db.order.findMany({where:{userId:s.id},orderBy:{createdAt:"desc"},include:{items:{include:{product:true}}}});
+  const selected = searchParams.order ? os.find(o=>o.id===searchParams.order) : null;
+  return <><h1 className="mb-4 text-2xl font-bold">Meus Pedidos</h1>{selected&&<div className="mb-4 rounded-xl border border-vio2/40 bg-vio2/10 p-4 text-sm"><b>Pedido criado.</b> O pagamento PIX ficará pendente até a confirmação da equipe.</div>}{!os.length&&<p className="text-mut">Você ainda não fez pedidos.</p>}
+    <div className="space-y-3">{os.map(o=><div key={o.id} className="rounded-xl border border-white/10 bg-card p-4 text-sm"><div className="flex justify-between"><b>#{o.id.slice(-6).toUpperCase()}</b><span>{ST[o.status]??o.status}</span></div>
+      <p className="text-mut">{o.items.map(i=>`${i.product.name} (${i.quantity}x)`).join(", ")}</p><p className="mt-1 text-xs text-mut">{o.createdAt.toLocaleDateString("pt-BR")} · {o.total.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})} · {o.payment} · pagamento: {o.paymentStatus ?? "PENDING"}</p>{o.paymentStatus === "PENDING" && o.pixCode && <p className="mt-2 break-all rounded-lg bg-surf p-2 text-[10px] text-vio2">PIX: {o.pixCode}</p>}{o.deliveryUrl && <p className="mt-2 rounded-lg bg-emerald-500/10 p-2 text-emerald-300">Pagamento aprovado. Sua entrega está liberada em Meus Produtos.</p>}{o.deliveryCode && o.deliveryUrl && <p className="mt-1 text-xs text-mut">Código de entrega: {o.deliveryCode}</p>}</div>)}</div></>;
+}

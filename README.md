@@ -1,26 +1,51 @@
-# Valória — Site estático
+# Valoria BLCKX — plataforma completa
+Next.js 14 (App Router) · TypeScript · Tailwind · Prisma · Lucide
 
-Este repositório contém um scaffold para o site do servidor de Minecraft *Valória*.
+## Rodar localmente
+1. Copie `.env.example` para `.env`
+2. Ajuste `AUTH_SECRET` para uma string forte
+3. Se for usar SQLite local, mantenha `DATABASE_URL="file:./dev.db"`
+4. Instale dependências e rode:
+   `npm install`
+   `npx prisma db push`
+   `npx tsx prisma/seed.ts`
+   `npm run dev`
+5. Acesse: http://localhost:3001
 
-Estrutura principal:
+Credenciais padrão do admin:
+- e-mail: frosth@valoria
+- senha: fh1626
 
-- `index.html` — página principal
-- `assets/css/styles.css` — estilos
-- `assets/js/main.js` — scripts (partículas, copiar IP, mock status)
-- `assets/images/` — substitua pelas imagens cinematográficas do seu servidor (banner-cinematic.jpg, castle.jpg, village.jpg, boss.jpg, dungeon.jpg, events.jpg, landscape.jpg, logo*.png, staff*.jpg)
+## Mapa
+- Público: `/`, `/produtos`, `/produtos/[id]`, `/carrinho`, `/atualizacoes`, `/wiki`, `/login`
+- Cliente (`/cliente/*`): painel, pedidos, produtos, favoritos, suporte, configurações
+- Admin (`/admin/*`, só ADMIN): dashboard, atualizações, produtos, categorias, pedidos, usuários, cupons, eventos, banners, suporte, configurações e logs
 
-Como rodar localmente:
+## Produção
+Para publicar em produção real, o projeto já está preparado para um setup Next.js profissional, mas ainda precisa de um provedor externo de banco e host.
 
-1. Abra uma pasta de terminal no diretório do projeto.
-2. Sirva os arquivos estáticos com um servidor simples. Exemplo com Python:
+### Recomendado
+- Host: Vercel / Render / VPS
+- Banco: PostgreSQL (Neon, Supabase, Railway ou VPS)
+- Storage: Cloudinary ou S3
+- Domínio: HTTPS com DNS apontando para o host
 
-```powershell
-# Python 3
-python -m http.server 8000
+### Ajustes mínimos
+- troque `DATABASE_URL` para a URL do banco de produção
+- configure `AUTH_SECRET` com valor forte e único
+- configure `NEXT_PUBLIC_APP_URL` com a URL pública real
+- se for deploy em Vercel, garanta que as variáveis de ambiente estejam setadas no painel do projeto
 
-# então abra http://localhost:8000
-```
+### Pagamento e pedidos
+- a lógica de pedidos está pronta no backend
+- para produção, conecte um gateway real de pagamento (Mercado Pago, Stripe, Pix provider ou outro)
+- ao receber confirmação do pagamento, atualize o pedido para `APPROVED` via webhook/admin
 
-Substitua as imagens em `assets/images/` por screenshots cinematográficas do servidor para alcançar o visual desejado.
+### Deploy no Vercel
+1. Conecte o repositório no Vercel
+2. Defina as variáveis de ambiente do `.env.example`
+3. Garanta que o banco de produção exista e a URL esteja correta
+4. Faça o deploy
+5. Teste login, painel admin e fluxo de compra em produção
 
-Nota: o status do servidor em `assets/js/main.js` é atualmente um mock. Substitua a lógica de `updateStatus()` para consultar a API real do servidor ou um endpoint de status.
+> O código já está pronto para subir em produção, mas o host externo e as credenciais de banco/deploy precisam existir para a publicação pública final.

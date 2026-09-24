@@ -1,0 +1,17 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+html{scroll-behavior:smooth}
+body{background:radial-gradient(circle at top,#0f172a 0%,#03050A 38%,#020409 100%);color:#fff}
+.grad{background:linear-gradient(90deg,#0B0F1A,#1D4ED8 45%,#60A5FA);-webkit-background-clip:text;background-clip:text;color:transparent}
+@layer components{
+ .btn{@apply rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200}
+ .btn-p{@apply btn text-white shadow-[0_0_28px_rgba(29,78,216,0.5)] hover:-translate-y-0.5 hover:brightness-110;background:linear-gradient(90deg,#0B0F1A,#1D4ED8)}
+ .btn-o{@apply btn border border-blue-500/60 bg-black/20 hover:-translate-y-0.5 hover:bg-blue-500/10}
+ .inp{@apply w-full rounded-xl border border-white/10 bg-card px-3 py-2.5 text-sm outline-none focus:border-blue-500}
+ .glass{@apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl}
+ .section-title{@apply text-2xl font-black md:text-3xl tracking-tight}
+ .page-shell{@apply mx-auto max-w-[1400px] px-4 py-8 lg:px-6}
+ .brand-tag{@apply inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-black/60 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300}
+}
+*{scrollbar-width:thin;scrollbar-color:#1D4ED8 #0A0D14}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#0A0D14}::-webkit-scrollbar-thumb{background:#1D4ED8;border-radius:99px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}

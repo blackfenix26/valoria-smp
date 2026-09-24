@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  username     String     @unique
+  email        String     @unique
+  passwordHash String
+  role         String     @default("USER")
+  active       Boolean    @default(true)
+  credits      Float      @default(0)
+  createdAt    DateTime   @default(now())
+  orders       Order[]
+  reviews      Review[]
+  tickets      Ticket[]
+  logs         AdminLog[]
+  updates      Update[]
+}
+
+model Category {
+  id      String    @id @default(cuid())
+  name    String    @unique
+  products Product[]
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  name         String
+  description  String
+  image        String
+  price        Float
+  promoPrice   Float?
+  stock        Int         @default(-1)
+  active       Boolean     @default(true)
+  featured     Boolean     @default(false)
+  deliveryType String      @default("DOWNLOAD")
+  deliveryInfo String?
+  createdAt    DateTime    @default(now())
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
+  reviews      Review[]
+  items        OrderItem[]
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  userId           String
+  user             User        @relation(fields: [userId], references: [id])
+  total            Float
+  status           String      @default("PENDING")
+  payment          String?
+  paymentStatus    String      @default("PENDING")
+  paymentReference String?
+  paymentQrCode    String?
+  pixCode          String?
+  paidAt           DateTime?
+  deliveryCode     String?
+  deliveryUrl      String?
+  createdAt        DateTime    @default(now())
+  items            OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  price     Float
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  stars     Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model Update {
+  id        String   @id @default(cuid())
+  title     String
+  summary   String
+  content   String
+  image     String?
+  category  String
+  status    String   @default("DRAFT")
+  publishAt DateTime @default(now())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String
+  image       String?
+  description String
+  startsAt    DateTime
+  endsAt      DateTime
+  link        String?
+  active      Boolean  @default(true)
+}
+
+model Banner {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  buttonText  String?
+  link        String?
+  active      Boolean @default(true)
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  subject   String
+  category  String
+  message   String
+  reply     String?
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id     String  @id @default(cuid())
+  code   String  @unique
+  percent Int
+  active Boolean @default(true)
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  action    String
+  target    String
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}

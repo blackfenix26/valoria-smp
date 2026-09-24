@@ -1,0 +1,13 @@
+Assets oficiais do Valoria SMP
+
+hero-valoria.jpg        -> banner principal do site
+valoria-cenario.jpg     -> cenário medieval para banners/seções
+valoria-logo.png        -> logo/ícone do Valoria SMP (PNG com fundo transparente)
+favicon.png             -> favicon
+cubo-roxo.png           -> cubo roxo/elemento visual
+alianca-real.png        -> produto Aliança Real
+bolsa-do-mercador.png   -> produto Bolsa do Mercador
+fortuna-real.png        -> produto Fortuna Real
+tesouro-imperial.png    -> produto Tesouro Imperial
+
+As imagens de produtos e a logo foram tratadas para remover o fundo preto e funcionar corretamente sobre o tema escuro.
