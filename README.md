@@ -1,4 +1,4 @@
-# Valoria BLCKX — plataforma completa
+# Valoria SMP — plataforma completa
 Next.js 14 (App Router) · TypeScript · Tailwind · Prisma · Lucide
 
 ## Rodar localmente

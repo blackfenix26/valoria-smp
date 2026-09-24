@@ -14,8 +14,8 @@ export default async function Header(){
         <div className="absolute left-0 mt-3 w-56 rounded-2xl border border-white/10 bg-card/95 p-2 text-sm shadow-2xl backdrop-blur-xl">{NAV.map(([l,h])=><Link key={l} href={h} className="block rounded-xl p-3 hover:bg-blue-500/10 hover:text-white">{l}</Link>)}</div>
       </details>
       <Link href="/" className="flex shrink-0 items-center gap-2.5">
-        <img src="/assets/valoria-logo.png" alt="Valoria BLCKX" className="h-10 w-10 object-contain"/>
-        <span className="hidden text-lg font-black tracking-tight sm:block text-white">VALORIA <span className="rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">BLCKX</span></span>
+        <img src="/assets/valoria-logo.png" alt="Valoria SMP" className="h-10 w-10 object-contain"/>
+        <span className="hidden text-lg font-black tracking-tight sm:block text-white">VALORIA <span className="rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">SMP</span></span>
       </Link>
       <nav className="hidden gap-5 text-sm font-medium text-white/70 lg:flex">{NAV.map(([l,h])=><Link key={l} href={h} className="transition hover:text-white">{l}</Link>)}</nav>
       <div className="flex-1"/>

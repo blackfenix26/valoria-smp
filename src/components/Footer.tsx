@@ -26,13 +26,13 @@ export default async function Footer() {
       <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr] lg:px-6">
         <div>
           <div className="flex items-center gap-3">
-            <img src="/assets/valoria-logo.png" alt="Valoria BLCKX" className="h-12 w-12 object-contain" />
+            <img src="/assets/valoria-logo.png" alt="Valoria SMP" className="h-12 w-12 object-contain" />
             <div className="text-xl font-black text-white">
-              VALORIA <span className="rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">BLCKX</span>
+              VALORIA <span className="rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">SMP</span>
             </div>
           </div>
           <p className="mt-4 max-w-md text-sm leading-6 text-mut">{s.footer_text || "Uma experiência Minecraft criada para aventureiros."}</p>
-          <p className="mt-6 text-xs text-mut">© 2026 Valoria BLCKX. Todos os direitos reservados.</p>
+          <p className="mt-6 text-xs text-mut">© 2026 Valoria SMP. Todos os direitos reservados.</p>
         </div>
 
         <div>
@@ -58,7 +58,7 @@ export default async function Footer() {
               ["link_youtube", "YouTube"],
             ].map(([k, n]) => L(k, n))}
           </div>
-          <p className="mt-5 text-xs text-mut">Acompanhe novidades, eventos e atualizações da Valoria BLCKX.</p>
+          <p className="mt-5 text-xs text-mut">Acompanhe novidades, eventos e atualizações da Valoria SMP.</p>
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export default async function Footer() {
         <div className="mx-auto flex max-w-[1400px] flex-wrap justify-between gap-3 px-4 py-4 text-xs text-mut lg:px-6">
           <span>♥ Feito para a comunidade Valoria</span>
           <div className="flex gap-5">
-            <span>Valoria BLCKX</span>
+            <span>Valoria SMP</span>
             <span>Suporte</span>
             <span>Termos</span>
             <span>Privacidade</span>

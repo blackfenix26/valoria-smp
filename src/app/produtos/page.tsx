@@ -11,7 +11,7 @@ export default async function Produtos({searchParams:sp}:{searchParams:SP}){
     <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <div>
         <span className="brand-tag">Loja oficial</span>
-        <h1 className="mt-3 section-title">Produtos BLCKX</h1>
+        <h1 className="mt-3 section-title">Produtos SMP</h1>
       </div>
       <p className="text-sm text-white/60">{total} itens disponíveis para você.</p>
     </div>

@@ -5,7 +5,7 @@ export default function Wiki() {
     <main className="page-shell">
       <div className="mb-8">
         <span className="brand-tag">Documentação</span>
-        <h1 className="section-title mt-3">Wiki da Valoria BLCKX</h1>
+        <h1 className="section-title mt-3">Wiki da Valoria SMP</h1>
         <p className="mt-3 max-w-2xl text-white/70">Tudo o que você precisa para entender regras, módulos, acessos e rotina da comunidade.</p>
       </div>
 

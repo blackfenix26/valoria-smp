@@ -24,7 +24,7 @@ export default function FaqPage() {
     <main className="page-shell">
       <div className="mb-8">
         <span className="brand-tag">Perguntas frequentes</span>
-        <h1 className="section-title mt-3">FAQ da Valoria BLCKX</h1>
+        <h1 className="section-title mt-3">FAQ da Valoria SMP</h1>
       </div>
 
       <div className="space-y-4">

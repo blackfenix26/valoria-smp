@@ -54,7 +54,7 @@ export default async function Admin() {
   return (
     <>
       <h1 className="text-2xl font-bold">Bem-vindo, Administrador!</h1>
-      <p className="mb-6 text-mut">Gerencie a Valoria BLCKX e mantenha a comunidade ativa.</p>
+      <p className="mb-6 text-mut">Gerencie a Valoria SMP e mantenha a comunidade ativa.</p>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(([label, value]) => (

@@ -52,7 +52,7 @@ export default function SideNav({ items }: { items: [string, string][] }) {
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.25em] text-blue-300/80">Admin</p>
-          <h2 className="text-sm font-bold text-white">Painel BLCKX</h2>
+          <h2 className="text-sm font-bold text-white">Painel SMP</h2>
         </div>
       </div>
 
