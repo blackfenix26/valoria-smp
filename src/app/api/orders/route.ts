@@ -1,6 +1,20 @@
-import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { getSession } from "@/lib/auth"; import { calculateTotal, createDeliveryCode } from "@/lib/checkout";
+import { NextResponse } from "next/server"; import { db, getSettings } from "@/lib/db"; import { getSession } from "@/lib/auth"; import { calculateTotal, createDeliveryCode } from "@/lib/checkout";
 
-const formatPix = (value: number) => `00020126580014br.gov.bcb.pix0136VALORIA-${value.toFixed(2).replace('.', '')}52040000530398654040${value.toFixed(2).replace('.', '')}5802BR5909VALORIA6009SAO PAULO62070503***6304`;
+const pixField = (id: string, value: string) => `${id}${String(value.length).padStart(2, "0")}${value}`;
+const crc16 = (payload: string) => {
+  let crc = 0xffff;
+  for (const char of payload) {
+    crc ^= char.charCodeAt(0) << 8;
+    for (let bit = 0; bit < 8; bit++) crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1;
+    crc &= 0xffff;
+  }
+  return crc.toString(16).toUpperCase().padStart(4, "0");
+};
+const formatPix = (value: number, key: string) => {
+  const merchantAccount = pixField("00", "BR.GOV.BCB.PIX") + pixField("01", key);
+  const payload = ["000201", pixField("26", merchantAccount), "52040000", "5303986", pixField("54", value.toFixed(2)), "5802BR", pixField("59", "VALORIA SMP"), pixField("60", "SAO PAULO"), pixField("62", pixField("05", "***")), "6304"].join("");
+  return `${payload}${crc16(payload)}`;
+};
 
 export async function POST(req: Request){
   const s = await getSession(); if(!s) return NextResponse.json({error:"Entre na sua conta para finalizar."},{status:401});
@@ -24,6 +38,7 @@ export async function POST(req: Request){
 
   const couponDb = body.coupon ? await db.coupon.findFirst({where:{code:String(body.coupon).toUpperCase(),active:true}}) : null;
   const total = calculateTotal(items.map((item) => ({ price: item.price, quantity: item.quantity })), couponDb ? couponDb.percent : 0);
+  const settings = await getSettings();
 
   const order = await db.order.create({
     data: {
@@ -33,7 +48,7 @@ export async function POST(req: Request){
       payment: "PIX",
       paymentStatus: "PENDING",
       paymentReference: `VALORIA-${Date.now()}`,
-      pixCode: formatPix(total),
+      pixCode: formatPix(total, settings.pix_key),
       deliveryCode: createDeliveryCode(uniqueIds.join("-")),
       items: { create: items.map((item) => ({ productId: item.productId, price: item.price, quantity: item.quantity })) }
     }

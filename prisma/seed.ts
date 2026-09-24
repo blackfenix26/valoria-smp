@@ -61,7 +61,7 @@ async function main() {
     });
   }
 
-  for (const [key, value] of [["footer_text", "Uma experiência Minecraft criada para aventureiros."], ["link_discord", "#"]]) {
+  for (const [key, value] of [["footer_text", "Uma experiência Minecraft criada para aventureiros."], ["link_discord", "#"], ["pix_key", "11912089765"]]) {
     await db.setting.upsert({ where: { key }, update: {}, create: { key, value } });
   }
 
