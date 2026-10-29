@@ -122,6 +122,14 @@ button:disabled{cursor:not-allowed;opacity:.55}
 .product-card{border-color:rgba(148,163,184,.14);background:linear-gradient(160deg,rgba(20,27,43,.98),rgba(12,16,26,.98))}
 .product-card:hover{border-color:rgba(96,165,250,.42);box-shadow:0 22px 52px rgba(0,0,0,.35),0 0 28px rgba(59,130,246,.08)}
 .product-media{background:radial-gradient(ellipse at 50% 40%,#202c47 0%,#121a2b 48%,#0d1320 100%)}
+.product-detail-media{background:radial-gradient(ellipse at 50% 42%,#1d2b45 0%,#111827 48%,#0b111c 100%);box-shadow:0 24px 70px rgba(0,0,0,.18)}
+.product-detail-media img{max-height:680px}
+.product-purchase-panel{border-color:rgba(148,163,184,.15);background:linear-gradient(155deg,rgba(19,27,43,.98),rgba(10,15,25,.98));box-shadow:0 20px 60px rgba(0,0,0,.16)}
+.product-benefit{background:rgba(15,23,42,.48)}
+.product-benefit b{line-height:1.35}
+.storefront-categories{border-color:rgba(148,163,184,.13)}
+.category-chip{min-height:38px;display:inline-flex;align-items:center}
+.category-chip-active{box-shadow:inset 0 0 0 1px rgba(147,197,253,.12),0 5px 16px rgba(59,130,246,.1)}
 .feature-card,.home-discovery{border-color:rgba(148,163,184,.16);box-shadow:inset 0 1px rgba(255,255,255,.035)}
 .feature-card-link,.home-discovery-link{color:#bfdbfe}
 .stat-pill{border-color:rgba(148,163,184,.15);background:linear-gradient(135deg,rgba(30,41,59,.56),rgba(15,23,42,.35))}
@@ -189,6 +197,11 @@ input,select,textarea{accent-color:#3b82f6}
 [data-theme="light"] .product-category{color:#666}
 [data-theme="light"] .product-card{background:linear-gradient(160deg,#fff,#f8fafc);border-color:rgba(15,23,42,.1)}
 [data-theme="light"] .product-card:hover{border-color:rgba(37,99,235,.3);box-shadow:0 18px 42px rgba(15,23,42,.12)}
+[data-theme="light"] .product-detail-media{background:radial-gradient(ellipse at 50% 42%,#fff 0%,#f1f5f9 52%,#e9eef5 100%);box-shadow:0 20px 56px rgba(15,23,42,.07)}
+[data-theme="light"] .product-purchase-panel{background:linear-gradient(155deg,#fff,#f8fafc);border-color:rgba(15,23,42,.1);box-shadow:0 18px 50px rgba(15,23,42,.07)}
+[data-theme="light"] .product-benefit{background:#f8fafc}
+[data-theme="light"] .storefront-categories{background:rgba(255,255,255,.88)!important}
+[data-theme="light"] .category-chip:not(.category-chip-active){background:#f8fafc;color:#475569}
 [data-theme="light"] .product-discount{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
 [data-theme="light"] .hero-proof{border-color:rgba(0,0,0,.14);background:rgba(255,255,255,.6)}
 [data-theme="light"] .hero-proof b{color:#111}
