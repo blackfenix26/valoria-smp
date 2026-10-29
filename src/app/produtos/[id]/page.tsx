@@ -45,7 +45,7 @@ export default async function Produto({params,searchParams}:{params:Promise<{id:
         <div className="mt-6 border-t border-white/10 pt-5">
           <div className="flex flex-wrap items-end gap-x-3 gap-y-1"><p className="text-3xl font-black tabular-nums">{brl(price)}</p>{discount>0&&<><s className="pb-1 text-sm text-mut">{brl(p.price)}</s><span className="pb-1 text-xs font-semibold text-emerald-300">Economize {brl(p.price-price)}</span></>}</div>
           {p.id===settings.realm_feature_product_id&&<p className="mt-3 rounded-xl border border-blue-300/15 bg-blue-400/5 p-3 text-xs leading-5 text-mut">{selectedRealm?`Este produto ativará o destaque de ${selectedRealm.name} após a confirmação do pagamento.`:"Para comprar este destaque, acesse a página do seu reino usando a conta cadastrada como líder."}</p>}
-          {(p.id!==settings.realm_feature_product_id||selectedRealm)&&<div className="mt-5 w-full"><AddButtons big p={{id:p.id,name:p.name,price,image:p.image,realmId:selectedRealm?.id,realmName:selectedRealm?.name}}/></div>}
+          {(p.id!==settings.realm_feature_product_id||selectedRealm)&&<div className="mt-5 w-full"><AddButtons big maxQuantity={p.id===settings.realm_feature_product_id?1:99} p={{id:p.id,name:p.name,price,image:p.image,realmId:selectedRealm?.id,realmName:selectedRealm?.name}}/></div>}
           <p className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-mut"><ShieldCheck size={13}/> Checkout seguro · entrega após aprovação</p>
         </div>
       </section>

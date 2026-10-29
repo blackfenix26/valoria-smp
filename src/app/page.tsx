@@ -40,6 +40,38 @@ export default async function Home(){
       </div></div>
     </section>
     <div className="border-b border-white/10 bg-surf"><div className="mx-auto grid max-w-[1400px] grid-cols-2 items-center gap-3 px-4 py-4 sm:grid-cols-3 lg:grid-cols-[auto_repeat(4,1fr)] lg:gap-6 lg:px-6"><b className="col-span-2 text-xs font-bold uppercase tracking-[.18em] text-mut sm:col-span-3 lg:col-span-1">Parceiros</b>{parc.slice(0,4).map(([n,d])=><div key={n} className="flex min-w-0 items-center gap-2 text-xs"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/10 text-xs font-black">{n[0]}</span><div className="min-w-0"><b className="block truncate">{n}</b><div className="truncate text-[9px] uppercase text-mut">{d}</div></div></div>)}</div></div>
+    <section className="mx-auto max-w-[1400px] px-4 pb-0 pt-6 lg:px-6">
+      <div className="quick-access-grid" aria-label="Acesso rápido à Valoria">
+        <Link href="/reinos" className="quick-access-card quick-access-realm">
+          <span className="quick-access-icon"><Map size={18}/></span>
+          <div>
+            <span className="section-kicker">Reinos</span>
+            <strong>Explorar mapa</strong>
+          </div>
+        </Link>
+        <Link href="/vips" className="quick-access-card quick-access-vip">
+          <span className="quick-access-icon"><Crown size={18}/></span>
+          <div>
+            <span className="section-kicker">VIPs</span>
+            <strong>Ver benefícios</strong>
+          </div>
+        </Link>
+        <Link href="/produtos" className="quick-access-card quick-access-shop">
+          <span className="quick-access-icon"><ShoppingBag size={18}/></span>
+          <div>
+            <span className="section-kicker">Loja</span>
+            <strong>Comprar agora</strong>
+          </div>
+        </Link>
+        <Link href="/trabalhe-conosco" className="quick-access-card quick-access-community">
+          <span className="quick-access-icon"><UsersRound size={18}/></span>
+          <div>
+            <span className="section-kicker">Comunidade</span>
+            <strong>Juntar-se</strong>
+          </div>
+        </Link>
+      </div>
+    </section>
     <div className="home-content mx-auto max-w-[1400px] space-y-12 px-4 py-8 lg:px-6">
       <section className="event-panel relative overflow-hidden rounded-3xl border border-vio/30 bg-gradient-to-r from-vio/60 via-vio/30 to-blu/40 p-5 shadow-[0_0_45px_#7c3cff20] md:p-6">
         <img src={event?.image||"/assets/cubo-roxo.png"} alt="" className="float-soft absolute -right-2 -top-8 h-40 w-40 object-contain opacity-80"/><div className="relative flex flex-wrap items-center gap-5"><img src="/assets/cubo-roxo.png" alt="" className="float-soft h-16 w-16 object-contain"/><div className="min-w-[200px] flex-1"><small className="rounded bg-vio px-2 py-1 text-[9px] font-bold">EVENTO ESPECIAL</small><h2 className="mt-1 text-xl font-black">{event?.name ?? "Temporada Valoria: Ascensão"}</h2><p className="text-sm text-white/70">{event?.description ?? "Participe do evento e desbloqueie recompensas exclusivas."}</p></div><Link href={event?.link||"/atualizacoes"} className="shine-hover rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-black">Ver evento →</Link></div>

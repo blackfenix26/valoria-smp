@@ -2,6 +2,7 @@
 export default function Carrinho(){
   const {cart,remove,clear,changeQty} = useCart(), r = useRouter(), [coupon,setCoupon] = useState(""), [appliedCoupon,setAppliedCoupon] = useState<{code:string;percent:number}|null>(null), [couponError,setCouponError] = useState(""), [couponBusy,setCouponBusy] = useState(false), [err,setErr] = useState(""), [busy,setBusy] = useState(false);
   const subtotal = useMemo(() => cart.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity || 1), 0), [cart]);
+  const totalQuantity = useMemo(() => cart.reduce((sum,item)=>sum+Number(item.quantity||1),0),[cart]);
   const discount = appliedCoupon?.percent ?? 0;
   const total = subtotal * (1 - discount / 100);
   const brl = (n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -35,7 +36,7 @@ export default function Carrinho(){
   }
 
   return <main className="cart-page mx-auto w-full max-w-6xl px-4 py-8 sm:py-12 lg:px-6">
-    <div className="mb-7"><Link href="/produtos" className="mb-5 inline-flex items-center gap-2 text-xs font-semibold text-mut transition hover:text-white"><ArrowLeft size={14}/> Continuar comprando</Link><span className="section-kicker block">Sua seleção</span><h1 className="mt-2 text-3xl font-black sm:text-4xl">Carrinho</h1><p className="mt-2 text-sm text-mut">{cart.length ? `${cart.length} ${cart.length === 1 ? "produto" : "produtos"} aguardando por você` : "Confira sua seleção antes de finalizar."}</p></div>
+    <div className="mb-7"><Link href="/produtos" className="mb-5 inline-flex items-center gap-2 text-xs font-semibold text-mut transition hover:text-white"><ArrowLeft size={14}/> Continuar comprando</Link><span className="section-kicker block">Sua seleção</span><h1 className="mt-2 text-3xl font-black sm:text-4xl">Carrinho</h1><p className="mt-2 text-sm text-mut">{cart.length ? `${totalQuantity} ${totalQuantity === 1 ? "unidade" : "unidades"} em ${cart.length} ${cart.length === 1 ? "produto" : "produtos"}` : "Confira sua seleção antes de finalizar."}</p></div>
     {!cart.length ? <div className="cart-empty glass rounded-[28px] p-8 text-center sm:p-12"><span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl border border-blue-300/15 bg-blue-400/10 text-blue-200"><ShoppingBag size={26}/></span><h2 className="mt-5 text-xl font-bold">Seu carrinho está vazio</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-mut">Explore a loja e encontre itens para sua próxima jornada em Valoria.</p><Link href="/produtos" className="btn-p mt-6 inline-flex min-h-11 items-center">Explorar produtos</Link></div> : <div className="grid items-start gap-5 lg:grid-cols-[1fr_360px]">
       <section className="space-y-3">
         {cart.map(i=><article key={cartItemKey(i)} className="cart-item flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-card p-3 sm:gap-4 sm:p-4">
@@ -46,7 +47,7 @@ export default function Carrinho(){
             <div className="mt-3 inline-flex items-center gap-3 rounded-lg border border-white/10 bg-black/10 p-1">
               <button type="button" aria-label={`Diminuir quantidade de ${i.name}`} onClick={()=>changeQty(cartItemKey(i),(i.quantity||1)-1)} className="grid h-7 w-7 place-items-center rounded-md transition hover:bg-white/10"><Minus size={13}/></button>
               <span className="min-w-4 text-center text-xs font-bold tabular-nums">{i.quantity || 1}</span>
-              <button type="button" aria-label={`Aumentar quantidade de ${i.name}`} onClick={()=>changeQty(cartItemKey(i),(i.quantity||1)+1)} className="grid h-7 w-7 place-items-center rounded-md transition hover:bg-white/10"><Plus size={13}/></button>
+              <button type="button" aria-label={`Aumentar quantidade de ${i.name}`} disabled={(i.quantity||1)>=99} onClick={()=>changeQty(cartItemKey(i),(i.quantity||1)+1)} className="grid h-7 w-7 place-items-center rounded-md transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35"><Plus size={13}/></button>
             </div>
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2"><b className="text-sm tabular-nums sm:text-base">{brl(Number(i.price) * Number(i.quantity || 1))}</b><button aria-label={`Remover ${i.name}`} onClick={()=>remove(cartItemKey(i))} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] text-mut transition hover:bg-red-400/10 hover:text-red-300"><Trash2 size={13}/> Remover</button></div>
