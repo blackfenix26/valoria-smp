@@ -3,9 +3,14 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function Admin() {
-  const day = new Date(new Date().setHours(0, 0, 0, 0));
-  const since = new Date(day.getTime() - 6 * 864e5);
+  const day = new Date();
+  day.setHours(0, 0, 0, 0);
+  const since = new Date(day);
+  since.setDate(since.getDate() - 6);
+  const tomorrow = new Date(day);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const compactBrl = (n: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(n);
 
   const [prod, ord, usr, sales, week, top, pendingOrders, openTickets, pendingApplications, pendingReviews, pendingServerReviews, recentOrders] = await Promise.all([
     db.product.count({ where: { active: true } }),
@@ -13,14 +18,15 @@ export default async function Admin() {
     db.user.count({ where: { active: true } }),
     db.order.aggregate({
       _sum: { total: true },
-      where: { status: "APPROVED", createdAt: { gte: day } },
+      where: { paymentStatus: "APPROVED", createdAt: { gte: day, lt: tomorrow } },
     }),
     db.order.findMany({
-      where: { status: "APPROVED", createdAt: { gte: since } },
+      where: { paymentStatus: "APPROVED", createdAt: { gte: since, lt: tomorrow } },
+      select: { total: true, createdAt: true },
     }),
     db.orderItem.groupBy({
       by: ["productId"],
-      where: { order: { is: { status: "APPROVED" } } },
+      where: { order: { is: { paymentStatus: "APPROVED" } } },
       _count: { productId: true },
       orderBy: { _count: { productId: "desc" } },
       take: 5,
@@ -42,13 +48,15 @@ export default async function Admin() {
   });
 
   const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(since.getTime() + i * 864e5);
+    const d = new Date(since);
+    d.setDate(since.getDate() + i);
     const value = week
-      .filter((o) => o.createdAt.toDateString() === d.toDateString())
+      .filter((o) => o.createdAt.getFullYear() === d.getFullYear() && o.createdAt.getMonth() === d.getMonth() && o.createdAt.getDate() === d.getDate())
       .reduce((sum, o) => sum + o.total, 0);
 
     return {
       label: d.toLocaleDateString("pt-BR", { weekday: "short" }),
+      date: d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
       value,
     };
   });
@@ -134,17 +142,19 @@ export default async function Admin() {
             </div>
             <a href="/admin/pedidos" className="shrink-0 text-xs font-semibold text-blue-300 underline underline-offset-4">Ver pedidos</a>
           </div>
-          <div className="flex h-40 items-end gap-2">
+          <div className="admin-sales-chart grid grid-cols-7 gap-2" role="img" aria-label={`Vendas aprovadas nos últimos sete dias: ${days.map(d => `${d.date}, ${brl(d.value)}`).join("; ")}`}>
             {days.map((d) => (
-              <div key={d.label} className="flex min-w-0 flex-1 flex-col items-center gap-1 self-stretch text-[10px] text-mut">
-                <div className="flex w-full flex-1 items-end">
+              <div key={d.date} className="flex min-w-0 flex-col items-center gap-1.5 text-center text-[10px] text-mut">
+                <span className="min-h-3 truncate text-[9px] font-semibold text-white/65" title={brl(d.value)}>{d.value ? compactBrl(d.value) : "—"}</span>
+                <div className="admin-sales-chart-track flex h-36 w-full items-end overflow-hidden rounded-t-lg">
                   <div
-                    title={brl(d.value)}
-                    style={{ height: `${(d.value / max) * 100}%` }}
-                    className="w-full min-h-1 rounded-t-xl bg-gradient-to-t from-blue-600 via-blue-500 to-cyan-400 shadow-[0_10px_25px_rgba(59,130,246,0.35)]"
+                    title={`${d.date}: ${brl(d.value)}`}
+                    style={{ height: d.value ? `${Math.max(6, (d.value / max) * 100)}%` : "2px" }}
+                    className="admin-sales-chart-bar w-full rounded-t-lg bg-gradient-to-t from-blue-600 via-blue-500 to-cyan-400 shadow-[0_0_22px_rgba(59,130,246,0.28)]"
                   />
                 </div>
-                <span className="uppercase">{d.label}</span>
+                <span className="uppercase">{d.label.replace(".", "")}</span>
+                <span className="text-[9px] text-white/45">{d.date}</span>
               </div>
             ))}
           </div>
