@@ -6,9 +6,10 @@ import { db, getSettings } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export default async function Reino({ params }: { params: { id: string } }) {
+export default async function Reino({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [realm, settings, session] = await Promise.all([
-    db.realm.findFirst({ where: { id: params.id, active: true } }),
+    db.realm.findFirst({ where: { id, active: true } }),
     getSettings(),
     getSession(),
   ]);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"; import { Prisma } from "@prisma/client"; import { db } from "@/lib/db"; import { requireAdmin } from "@/lib/auth"; import { MODELS, coerce } from "@/lib/crud"; import { createDeliveryCode } from "@/lib/checkout";
-type Ctx = { params: { model: string } };
+type Ctx = { params: Promise<{ model: string }> };
 const gate = async () => { try { return await requireAdmin() } catch { return null } };
 const err = (m: string, s: number) => NextResponse.json({ error: m }, { status: s });
 function galleryUrls(value: unknown) {
@@ -44,14 +44,16 @@ async function approveOrder(orderId: string) {
   }
 }
 export async function GET(_: Request, { params }: Ctx){
-  const s = await gate(); const c = MODELS[params.model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
+  const { model } = await params;
+  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
   return NextResponse.json(await (db as any)[c.delegate].findMany({ ...(c.order?{orderBy:c.order}:{}), ...(c.include?{include:c.include}:{}), ...(c.select?{select:c.select}:{}) }));
 }
 export async function POST(req: Request, { params }: Ctx){
-  const s = await gate(); const c = MODELS[params.model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
+  const { model } = await params;
+  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
   const b = await req.json(); const data = coerce(c.fields, b); if(!data) return err("Valores inválidos.",400);
-  if(params.model === "realm" && String(data.description ?? "").trim().length < 20) return err("A descrição do reino precisa ter pelo menos 20 caracteres.",400);
-  if(params.model === "product"){
+  if(model === "realm" && String(data.description ?? "").trim().length < 20) return err("A descrição do reino precisa ter pelo menos 20 caracteres.",400);
+  if(model === "product"){
     const photos=galleryUrls(data.gallery);
     if(!b.id && (photos.length<2 || !data.videoDemo)) return err("Novos produtos precisam de pelo menos duas fotos e um vídeo de demonstração.",400);
     if((photos.length>0 && photos.some(url=>!validHttpsUrl(url))) || (data.videoDemo && !validHttpsUrl(data.videoDemo))) return err("Use URLs HTTPS válidas para fotos e vídeo de demonstração.",400);
@@ -60,9 +62,9 @@ export async function POST(req: Request, { params }: Ctx){
   try{
     if(c.upsert){ if(!b.key) return err("Informe a chave.",400); await d.upsert({where:{key:b.key},update:data,create:{key:b.key,...data}}) }
     else if(b.id){
-      if(params.model === "order" && data.status === "APPROVED"){
+      if(model === "order" && data.status === "APPROVED"){
         await approveOrder(String(b.id));
-      } else if(params.model === "order" && data.status === "CANCELED"){
+      } else if(model === "order" && data.status === "CANCELED"){
         await db.$transaction(async tx=>{
           const order=await tx.order.findUnique({where:{id:String(b.id)},include:{items:{include:{realm:true}}}});
           if(!order) throw new Error("ORDER_NOT_FOUND");
@@ -76,7 +78,7 @@ export async function POST(req: Request, { params }: Ctx){
             }
           }
         });
-      } else if(params.model === "order" && ["PROCESSING","COMPLETED"].includes(data.status)){
+      } else if(model === "order" && ["PROCESSING","COMPLETED"].includes(data.status)){
         const order = await db.order.findUnique({where:{id:b.id},select:{paymentStatus:true}});
         if(order?.paymentStatus !== "APPROVED") return err("Confirme o pagamento antes de processar ou concluir a entrega.",409);
         await d.update({where:{id:b.id},data});
@@ -84,19 +86,20 @@ export async function POST(req: Request, { params }: Ctx){
     }
     else if(c.create) await d.create({data}); else return err("Criação não permitida.",405);
   }catch{ return err("Dados inválidos ou duplicados.",400) }
-  await db.adminLog.create({data:{adminId:s.id,action:`${params.model}_${b.id||b.key?"edit":"create"}`,target:String(b.id||b.key||"novo")}});
+  await db.adminLog.create({data:{adminId:s.id,action:`${model}_${b.id||b.key?"edit":"create"}`,target:String(b.id||b.key||"novo")}});
   return NextResponse.json({ok:true});
 }
 export async function DELETE(req: Request, { params }: Ctx){
-  const s = await gate(); const c = MODELS[params.model]; if(!s) return err("forbidden",403); if(!c||!c.del) return err("not allowed",405);
+  const { model } = await params;
+  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c||!c.del) return err("not allowed",405);
   const b = await req.json(); const id = String(b.id ?? b.key);
   try{
-    if(params.model === "order") {
+    if(model === "order") {
       await db.$transaction(async (tx) => {
         await tx.orderItem.deleteMany({ where: { orderId: id } });
         await tx.order.delete({ where: { id } });
       });
     } else await (db as any)[c.delegate].delete({where:c.upsert?{key:id}:{id}})
   }catch{ return err("Não foi possível excluir (item em uso ou pedido inexistente).",409) }
-  await db.adminLog.create({data:{adminId:s.id,action:`${params.model}_delete`,target:id}}); return NextResponse.json({ok:true});
+  await db.adminLog.create({data:{adminId:s.id,action:`${model}_delete`,target:id}}); return NextResponse.json({ok:true});
 }

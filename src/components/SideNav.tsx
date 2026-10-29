@@ -82,6 +82,26 @@ export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP"
     { title: "Sistema", links: visibleItems.filter(([, href]) => ["/admin/usuarios", "/admin/configuracoes", "/admin/logs"].includes(href)) },
   ] : [{ title: "", links: visibleItems }];
   const currentLabel = items.find(([, href]) => pathname === href || (href !== "/admin" && pathname.startsWith(href)))?.[0];
+  const renderLink = ([label, href]: [string, string]) => {
+    const Icon = ICONS[label] || BarChart3;
+    const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
+
+    return <Link
+      key={href}
+      href={href}
+      aria-current={active ? "page" : undefined}
+      title={label}
+      className={`workspace-nav-link flex items-center gap-3 rounded-xl border px-3 py-2.5 text-[13px] transition ${
+        active
+          ? "border-blue-500/35 bg-blue-500/12 text-white shadow-[inset_3px_0_0_#60a5fa,0_0_20px_rgba(59,130,246,0.12)]"
+          : "border-transparent bg-white/[0.02] text-white/65 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
+      }`}
+    >
+      <Icon size={16} className={active ? "text-blue-300" : "text-white/45"} />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {active && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-300"/>}
+    </Link>;
+  };
 
   return (
     <aside className="workspace-sidebar rounded-3xl border border-white/10 bg-[#0a0d14]/80 p-3 shadow-[0_0_30px_rgba(29,78,216,0.12)] backdrop-blur-xl md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:w-[270px] md:shrink-0 md:overflow-y-auto">
@@ -118,29 +138,12 @@ export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP"
             />
           </label>
         )}
-        {groups.map(group => group.links.length > 0 && <div key={group.title || "account"} className="space-y-1.5">
-          {group.title && <p className="px-3 pb-1 text-[9px] font-bold uppercase tracking-[.2em] text-white/35">{group.title}</p>}
-          {group.links.map(([label, href]) => {
-            const Icon = ICONS[label] || BarChart3;
-            const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
-
-            return <Link
-              key={href}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              title={label}
-              className={`workspace-nav-link flex items-center gap-3 rounded-xl border px-3 py-2.5 text-[13px] transition ${
-                active
-                  ? "border-blue-500/35 bg-blue-500/12 text-white shadow-[inset_3px_0_0_#60a5fa,0_0_20px_rgba(59,130,246,0.12)]"
-                  : "border-transparent bg-white/[0.02] text-white/65 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
-              }`}
-            >
-              <Icon size={16} className={active ? "text-blue-300" : "text-white/45"} />
-              <span className="min-w-0 flex-1 truncate">{label}</span>
-              {active && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-300"/>}
-            </Link>;
-          })}
-        </div>)}
+        {groups.map(group => group.links.length > 0 && (group.title ? (
+          <details key={group.title} className="workspace-nav-group" open={group.links.some(([, href]) => pathname === href || (href !== "/admin" && pathname.startsWith(href))) || Boolean(navQuery)}>
+            <summary>{group.title}<ChevronDown size={14} aria-hidden="true"/></summary>
+            <div className="workspace-nav-group-links">{group.links.map(renderLink)}</div>
+          </details>
+        ) : <div key="account" className="space-y-1.5">{group.links.map(renderLink)}</div>))}
         {!visibleItems.length && <p className="px-3 py-4 text-sm text-white/50">Nenhuma seção encontrada.</p>}
 
         <div className="mt-2 border-t border-white/10 pt-2">

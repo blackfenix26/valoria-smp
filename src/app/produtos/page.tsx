@@ -1,7 +1,8 @@
 import Link from "next/link"; import { db } from "@/lib/db"; import ProductCard from "@/components/ProductCard";
 export const dynamic = "force-dynamic"; const PER = 12;
 type SP = { q?:string; cat?:string; sort?:string; page?:string };
-export default async function Produtos({searchParams:sp}:{searchParams:SP}){
+export default async function Produtos({searchParams}:{searchParams:Promise<SP>}){
+  const sp = await searchParams;
   const page = Math.max(1,Number(sp.page)||1), cats = await db.category.findMany({orderBy:{name:"asc"}});
   const where = { active:true, ...(sp.q?{name:{contains:sp.q}}:{}), ...(sp.cat&&sp.cat!=="Todos"?{category:{name:sp.cat}}:{}) };
   const orderBy = sp.sort==="asc"?{price:"asc" as const}:sp.sort==="desc"?{price:"desc" as const}:{createdAt:"desc" as const};

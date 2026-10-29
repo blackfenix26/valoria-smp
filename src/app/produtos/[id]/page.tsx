@@ -3,12 +3,14 @@ import { ArrowLeft, Check, Images, ShieldCheck, Star } from "lucide-react";
 import { notFound } from "next/navigation"; import { db, getSettings } from "@/lib/db"; import { getSession } from "@/lib/auth"; import AddButtons from "@/components/AddButtons"; import ReviewForm from "@/components/ReviewForm";
 import { parseProductBenefits } from "@/lib/product-content";
 export const dynamic = "force-dynamic";
-export default async function Produto({params,searchParams}:{params:{id:string};searchParams:{realmId?:string}}){
-  const p = await db.product.findUnique({where:{id:params.id},include:{category:true,reviews:{where:{status:"APPROVED"},include:{user:{select:{name:true}}},orderBy:{createdAt:"desc"}}}});
+export default async function Produto({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{realmId?:string}>}){
+  const { id } = await params;
+  const sp = await searchParams;
+  const p = await db.product.findUnique({where:{id},include:{category:true,reviews:{where:{status:"APPROVED"},include:{user:{select:{name:true}}},orderBy:{createdAt:"desc"}}}});
   if(!p||!p.active) notFound(); const price = p.promoPrice??p.price, brl = (n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const [settings,session]=await Promise.all([getSettings(),getSession()]);
   const account=session?await db.user.findUnique({where:{id:session.id},select:{email:true}}):null;
-  const realmCandidate=p.id===settings.realm_feature_product_id&&searchParams.realmId&&account?.email?await db.realm.findFirst({where:{id:searchParams.realmId,active:true,premium:false},select:{id:true,name:true,leaderEmail:true}}):null;
+  const realmCandidate=p.id===settings.realm_feature_product_id&&sp.realmId&&account?.email?await db.realm.findFirst({where:{id:sp.realmId,active:true,premium:false},select:{id:true,name:true,leaderEmail:true}}):null;
   const selectedRealm=realmCandidate?.leaderEmail&&account?.email&&realmCandidate.leaderEmail.toLowerCase()===account.email.toLowerCase()?{id:realmCandidate.id,name:realmCandidate.name}:null;
   let gallery: string[] = [], sections: [string,string][] = [];
   let vipBenefits: {title:string;detail:string}[] = [];

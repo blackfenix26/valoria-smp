@@ -7,10 +7,11 @@ const key = new TextEncoder().encode(secret);
 export type Session = { id: string; role: "USER" | "ADMIN" };
 export async function createSession(s: Session){
   const t = await new SignJWT({...s}).setProtectedHeader({alg:"HS256"}).setExpirationTime("7d").sign(key);
-  cookies().set("session", t, {httpOnly:true, sameSite:"lax", secure:process.env.NODE_ENV==="production", path:"/", maxAge:604800});
+  (await cookies()).set("session", t, {httpOnly:true, sameSite:"lax", secure:process.env.NODE_ENV==="production", path:"/", maxAge:604800});
 }
 export async function getSession(): Promise<Session|null>{
-  const t = cookies().get("session")?.value; if(!t) return null;
+  const cookieStore = await cookies();
+  const t = cookieStore.get("session")?.value; if(!t) return null;
   let payload;
   try{
     payload = (await jwtVerify(t,key)).payload;

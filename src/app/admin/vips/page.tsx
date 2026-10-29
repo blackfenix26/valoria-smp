@@ -22,15 +22,23 @@ export default function OrganizarVips() {
   const [message, setMessage] = useState("");
 
   async function load() {
-    const response = await fetch("/api/admin/crud/product");
-    if (!response.ok) { setError("Não foi possível carregar os produtos."); setLoading(false); return; }
-    const rows = await response.json() as Product[];
-    const combos = rows.filter(row => row.category?.name.toLowerCase().includes("combo"))
-      .map(row => ({ ...row, vipOrder: row.vipOrder || 0 }))
-      .sort((a, b) => a.vipOrder - b.vipOrder || a.name.localeCompare(b.name));
-    setProducts(combos);
-    setFeaturedId(combos.find(product => product.featured)?.id || "");
-    setLoading(false);
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch("/api/admin/crud/product");
+      const rows = await response.json() as Product[];
+      if (!response.ok) throw new Error("Não foi possível carregar os produtos.");
+      if (!Array.isArray(rows)) throw new Error("A resposta do servidor está em um formato inesperado.");
+      const combos = rows.filter(row => row.category?.name.toLowerCase().includes("combo"))
+        .map(row => ({ ...row, vipOrder: row.vipOrder || 0 }))
+        .sort((a, b) => a.vipOrder - b.vipOrder || a.name.localeCompare(b.name));
+      setProducts(combos);
+      setFeaturedId(combos.find(product => product.featured)?.id || "");
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Não foi possível carregar os produtos.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, []);
@@ -55,11 +63,19 @@ export default function OrganizarVips() {
 
   async function save() {
     setError(""); setMessage(""); setBusy(true);
-    for (const [index, product] of products.entries()) {
-      const response = await fetch("/api/admin/crud/product", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: product.id, vipOrder: index + 1, vipBenefits: product.vipBenefits, featured: product.id === featuredId }) });
-      if (!response.ok) { const data = await response.json(); setError(data.error || `Falha ao salvar ${product.name}.`); setBusy(false); return; }
+    try {
+      for (const [index, product] of products.entries()) {
+        const response = await fetch("/api/admin/crud/product", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: product.id, vipOrder: index + 1, vipBenefits: product.vipBenefits, featured: product.id === featuredId }) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || `Falha ao salvar ${product.name}.`);
+      }
+      setMessage("Ordem, destaque e benefícios dos VIPs salvos.");
+      await load();
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : "Não foi possível salvar a organização dos VIPs.");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false); setMessage("Ordem, destaque e benefícios dos VIPs salvos."); await load();
   }
 
   return <main>
