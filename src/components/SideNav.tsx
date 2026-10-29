@@ -20,6 +20,16 @@ import {
   FileClock,
   LogOut,
   Search,
+  BookOpen,
+  Briefcase,
+  Building2,
+  ClipboardList,
+  Compass,
+  Crown,
+  Megaphone,
+  MessageSquare,
+  Sparkles,
+  Star,
 } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import { useState } from "react";
@@ -41,6 +51,19 @@ const ICONS: Record<string, typeof BarChart3> = {
   "Meus Pedidos": ShoppingBag,
   "Meus Produtos": Package,
   Favoritos: Heart,
+  "Organizar VIPs": Crown,
+  Reinos: Compass,
+  "Destaque premium dos reinos": Sparkles,
+  Oportunidades: Briefcase,
+  "Trabalhe Conosco": Briefcase,
+  Candidaturas: ClipboardList,
+  Wiki: BookOpen,
+  FAQ: MessageSquare,
+  Patrocinadores: Building2,
+  "Tópicos do site": Compass,
+  Avaliações: Star,
+  "Avaliar servidor": Star,
+  "Sugestões de melhoria ADM": MessageSquare,
 };
 
 export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP" }: { items: [string, string][]; eyebrow?: string; title?: string }) {
@@ -50,7 +73,7 @@ export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP"
   const visibleItems = items.filter(([label]) => label.toLowerCase().includes(navQuery.trim().toLowerCase()));
 
   return (
-    <aside className="rounded-3xl border border-white/10 bg-[#0a0d14]/80 p-3 shadow-[0_0_30px_rgba(29,78,216,0.12)] backdrop-blur-xl md:w-[260px] md:shrink-0">
+    <aside className="workspace-sidebar rounded-3xl border border-white/10 bg-[#0a0d14]/80 p-3 shadow-[0_0_30px_rgba(29,78,216,0.12)] backdrop-blur-xl md:w-[260px] md:shrink-0">
       <div className="mb-4 flex items-center gap-3 rounded-2xl border border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-black/20 p-3">
         <div className="grid h-10 w-10 place-items-center rounded-xl bg-blue-500/15 text-blue-300">
           <BarChart3 size={18} />
@@ -86,7 +109,7 @@ export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP"
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 whitespace-nowrap rounded-2xl border px-3 py-2.5 text-sm transition ${
+              className={`workspace-nav-link flex items-center gap-3 whitespace-nowrap rounded-2xl border px-3 py-2.5 text-sm transition ${
                 active
                   ? "border-blue-500/50 bg-blue-500/12 text-white shadow-[0_0_20px_rgba(59,130,246,0.18)]"
                   : "border-transparent bg-white/[0.02] text-white/70 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
