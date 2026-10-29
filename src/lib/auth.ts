@@ -1,5 +1,7 @@
 import { SignJWT, jwtVerify } from "jose"; import { cookies } from "next/headers";
-const key = new TextEncoder().encode(process.env.AUTH_SECRET!);
+const FALLBACK_AUTH_SECRET = "valoria-smp-fallback-secret-2026-change-me";
+const secret = (process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || FALLBACK_AUTH_SECRET).trim();
+const key = new TextEncoder().encode(secret);
 export type Session = { id: string; role: "USER" | "ADMIN" };
 export async function createSession(s: Session){
   const t = await new SignJWT({...s}).setProtectedHeader({alg:"HS256"}).setExpirationTime("7d").sign(key);

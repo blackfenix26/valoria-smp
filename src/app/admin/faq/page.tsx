@@ -1,0 +1,2 @@
+import CrudManager from "@/components/CrudManager";
+export default function Page(){return <CrudManager model="faqItem" title="Perguntas frequentes" columns={[{key:"category",label:"Categoria"},{key:"question",label:"Pergunta"},{key:"active",label:"Ativa"},{key:"sortOrder",label:"Ordem"}]} fields={[{key:"category",label:"Categoria",type:"text"},{key:"question",label:"Pergunta",type:"text"},{key:"answer",label:"Resposta",type:"textarea"},{key:"sortOrder",label:"Ordem",type:"number"},{key:"active",label:"Ativa",type:"bool"}]}/>}

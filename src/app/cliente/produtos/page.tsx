@@ -2,8 +2,8 @@ import Link from "next/link"; import { db } from "@/lib/db"; import { getSession
 export default async function MeusProdutos(){
   const s = (await getSession())!;
   const items = await db.orderItem.findMany({
-    where: { order: { userId: s.id, status: { in: ["APPROVED", "COMPLETED", "PROCESSING"] } } },
-    include: { product: true, order: true },
+    where: { order: { userId: s.id, paymentStatus: "APPROVED", status: { in: ["APPROVED", "COMPLETED", "PROCESSING"] } } },
+    include: { product: true, order: true, redemptionCodes: { orderBy: { createdAt: "asc" } } },
     orderBy: { order: { createdAt: "desc" } }
   });
   return <><h1 className="mb-4 text-2xl font-bold">Meus Produtos</h1>{!items.length&&<p className="text-mut">Seus produtos aparecem aqui depois que o pagamento for aprovado.</p>}
@@ -13,6 +13,6 @@ export default async function MeusProdutos(){
           <Link href={`/produtos/${i.productId}`} className="text-vio2">Ver produto</Link>
           {i.order.deliveryUrl && <><span className="text-muted">•</span><Link href={i.order.deliveryUrl} className="text-vio2">Acessar entrega</Link></>}
         </div>
-        {i.order.deliveryCode && <p className="break-all rounded-lg bg-surf p-2 text-[10px] text-vio2">Código de entrega: {i.order.deliveryCode}</p>}
+        {i.redemptionCodes.length>0&&<div className="space-y-2">{i.redemptionCodes.map((code,index)=><div key={code.id} className="rounded-lg border border-white/10 bg-surf p-3"><p className="text-[11px] text-mut">Unidade {index+1} · {code.redeemedAt?`Resgatado por ${code.redeemedBy||"jogador"}`:"Disponível para resgate"}</p><p className="mt-1 font-mono text-lg font-bold tracking-widest">{code.code}</p>{!code.redeemedAt&&<p className="mt-1 text-[10px] text-mut">Resgate este código uma única vez no servidor.</p>}</div>)}</div>}
       </div></div>)}</div></>;
 }

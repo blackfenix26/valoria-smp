@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 export type CheckoutItem = { price: number; quantity?: number };
 
 export function calculateSubtotal(items: CheckoutItem[]) {
@@ -14,6 +16,22 @@ export function canReviewProduct(boughtProductIds: string[], productId: string) 
   return boughtProductIds.includes(productId);
 }
 
-export function createDeliveryCode(productId: string) {
-  return `VALORIA-${String(productId).slice(0, 8).toUpperCase()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+export function createDeliveryCode(_productId?: string) {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = randomBytes(6);
+  const code = [...bytes].map((byte) => alphabet[byte % alphabet.length]).join("");
+  return `VLR-${code}`;
+}
+
+export function isValidDeliveryCode(code: string) {
+  return /^VLR-[A-HJ-NP-Z2-9]{6}$/.test(code);
+}
+
+export function normalizePixPhoneKey(key: string) {
+  const value = key.trim();
+  const digits = value.replace(/\D/g, "");
+  if (value.startsWith("+") && digits.startsWith("55") && digits.length >= 12 && digits.length <= 13) return `+${digits}`;
+  if ((digits.length === 10 || digits.length === 11) && !value.startsWith("+")) return `+55${digits}`;
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) return `+${digits}`;
+  return value;
 }

@@ -1,0 +1,3 @@
+import CrudManager from "@/components/CrudManager";
+import WikiBlocksEditor from "@/components/WikiBlocksEditor";
+export default function Page(){return <><WikiBlocksEditor/><CrudManager model="wikiArticle" title="Artigos completos da Wiki" columns={[{key:"title",label:"Título"},{key:"category",label:"Categoria"},{key:"summary",label:"Resumo"},{key:"published",label:"Publicado"}]} fields={[{key:"title",label:"Título",type:"text"},{key:"category",label:"Categoria",type:"text"},{key:"summary",label:"Resumo",type:"textarea"},{key:"content",label:"Conteúdo completo",type:"textarea"},{key:"published",label:"Publicado",type:"bool"}]}/></>}

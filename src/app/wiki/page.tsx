@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { db, getSettings } from "@/lib/db";
+import KnowledgeSearch from "@/components/KnowledgeSearch";
 
-export default function Wiki() {
+export const dynamic = "force-dynamic";
+export default async function Wiki() {
+  const [settings, articles] = await Promise.all([getSettings(), db.wikiArticle.findMany({where:{published:true},orderBy:{category:"asc"}})]);
+  let entries: [string, string][] = [];
+  try { entries = JSON.parse(settings.wiki_content); } catch {}
   return (
     <main className="page-shell">
       <div className="mb-8">
@@ -8,22 +14,7 @@ export default function Wiki() {
         <h1 className="section-title mt-3">Wiki da Valoria SMP</h1>
         <p className="mt-3 max-w-2xl text-white/70">Tudo o que você precisa para entender regras, módulos, acessos e rotina da comunidade.</p>
       </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {[
-          ["Regras da comunidade", "Conheça as normas, condutas e políticas para manter a experiência justa e segura."],
-          ["Como comprar e ativar um produto", "Entenda o processo de checkout, aprovação e liberação do item ou benefício adquirido."],
-          ["Acesso ao painel do cliente", "Saiba onde verificar pedidos, suporte, produtos liberados e informações da sua conta."],
-          ["Eventos e temporadas", "Veja como funcionam as promoções, recompensas e campanhas especiais do servidor."],
-          ["Suporte técnico", "Acesse o centro de ajuda para tirar dúvidas sobre compras, permissões e acesso."],
-          ["Perguntas frequentes", "Resposta rápida para dúvidas comuns sobre planos, produtos e comunidade."],
-        ].map(([title, text]) => (
-          <div key={title} className="glass p-5">
-            <h2 className="text-lg font-bold text-white">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">{text}</p>
-          </div>
-        ))}
-      </div>
+      <KnowledgeSearch entries={[...entries.map(([title,content])=>({category:"Blocos",title,summary:"",content})),...articles]}/>
 
       <div className="glass mt-8 p-5">
         <h2 className="text-xl font-black">Guia rápido</h2>

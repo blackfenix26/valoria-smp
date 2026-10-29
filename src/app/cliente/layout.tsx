@@ -6,7 +6,7 @@ export default async function ClienteLayout({ children }: { children: React.Reac
   if (!(await getSession())) redirect("/login?next=/cliente");
 
   return (
-    <div className="mx-auto max-w-[1500px] px-4 py-8 lg:px-6">
+    <div className="w-full px-4 py-8 lg:px-8">
       <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/10 bg-[#090d13]/90 p-4 shadow-[0_0_35px_rgba(29,78,216,0.12)] md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.28em] text-blue-300/80">Minha conta</p>
@@ -19,11 +19,12 @@ export default async function ClienteLayout({ children }: { children: React.Reac
       </div>
 
       <div className="flex flex-col gap-6 md:flex-row">
-        <SideNav
+        <SideNav eyebrow="Conta" title="Painel do cliente"
           items={[
             ["Início", "/cliente"],
             ["Meus Pedidos", "/cliente/pedidos"],
             ["Meus Produtos", "/cliente/produtos"],
+            ["Avaliar servidor", "/cliente/avaliacoes"],
             ["Favoritos", "/cliente/favoritos"],
             ["Suporte", "/cliente/suporte"],
             ["Configurações", "/cliente/configuracoes"],

@@ -6,6 +6,8 @@ const FALLBACK_LINKS: Record<string, string> = {
   link_terms: "/termos",
   link_privacy: "/privacidade",
   link_faq: "/faq",
+  link_reinos: "/reinos",
+  link_trabalhe_conosco: "/trabalhe-conosco",
   link_discord: "#",
   link_instagram: "#",
   link_tiktok: "#",
@@ -15,20 +17,22 @@ const FALLBACK_LINKS: Record<string, string> = {
 export default async function Footer() {
   const s = await getSettings();
 
-  const L = (k: string, n: string) => (
-    <Link key={n} href={s[k] || FALLBACK_LINKS[k] || "#"} className="transition hover:text-white">
-      {n}
-    </Link>
-  );
+  const L = (k: string, n: string) => {
+    const configured = String(s[k] || "").trim();
+    const href = !configured || configured === "#" ? String(FALLBACK_LINKS[k] || "").trim() : configured;
+    if (!href || href === "#" || href.startsWith("#")) return null;
+    const external = /^https?:\/\//i.test(href);
+    return <Link key={n} href={href} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined} className="transition hover:text-white">{n}</Link>;
+  };
 
   return (
-    <footer className="mt-20 border-t border-white/10 bg-surf">
+    <footer className="site-footer mt-20 border-t border-white/10 bg-surf">
       <div className="mx-auto grid max-w-[1400px] gap-10 px-4 py-12 md:grid-cols-[1.4fr_1fr_1fr] lg:px-6">
         <div>
           <div className="flex items-center gap-3">
             <img src="/assets/valoria-logo.png" alt="Valoria SMP" className="h-12 w-12 object-contain" />
-            <div className="text-xl font-black text-white">
-              VALORIA <span className="rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">SMP</span>
+            <div className="site-brand-name text-xl font-black text-white">
+              VALORIA <span className="site-brand-mark rounded bg-black px-1.5 py-0.5 text-blue-400 shadow-[0_0_18px_rgba(59,130,246,0.5)]">SMP</span>
             </div>
           </div>
           <p className="mt-4 max-w-md text-sm leading-6 text-mut">{s.footer_text || "Uma experiência Minecraft criada para aventureiros."}</p>
@@ -43,6 +47,8 @@ export default async function Footer() {
               ["link_terms", "Termos de Serviço"],
               ["link_privacy", "Política de Privacidade"],
               ["link_faq", "FAQ"],
+              ["link_reinos", "Reinos"],
+              ["link_trabalhe_conosco", "Trabalhe Conosco"],
             ].map(([k, n]) => L(k, n))}
             <Link href="/cliente/suporte" className="transition hover:text-white">Suporte</Link>
           </div>

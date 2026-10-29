@@ -4,22 +4,34 @@ import bcrypt from "bcryptjs";
 const db = new PrismaClient();
 
 async function main() {
-  const admin = await db.user.upsert({
-    where: { email: "frosth@valoria" },
-    update: {
-      role: "ADMIN",
-      active: true,
-      name: "Frosth",
-      username: "frosth",
-    },
-    create: {
-      name: "Frosth",
-      username: "frosth",
-      email: "frosth@valoria",
-      passwordHash: await bcrypt.hash("fh1626", 10),
-      role: "ADMIN",
-    },
-  });
+  const passwordHash = await bcrypt.hash("fh1626", 10);
+  const adminEmail = "frosth@valoria.com";
+  const adminUsername = "frosth_admin";
+
+  const existingAdmin = await db.user.findUnique({ where: { email: adminEmail } })
+    ?? await db.user.findFirst({ where: { OR: [{ username: adminUsername }, { username: "frosth" }] } });
+
+  const admin = existingAdmin
+    ? await db.user.update({
+        where: { id: existingAdmin.id },
+        data: {
+          role: "ADMIN",
+          active: true,
+          name: "Frosth",
+          username: adminUsername,
+          email: adminEmail,
+          passwordHash,
+        },
+      })
+    : await db.user.create({
+        data: {
+          name: "Frosth",
+          username: adminUsername,
+          email: adminEmail,
+          passwordHash,
+          role: "ADMIN",
+        },
+      });
 
   const cat = async (name: string) => db.category.upsert({ where: { name }, update: {}, create: { name } });
   const [ranks, kits, moedas, cosm] = await Promise.all(["Ranks", "Kits", "Moedas", "Cosméticos"].map(cat));
@@ -57,12 +69,13 @@ async function main() {
         productId: first.id,
         stars: 5,
         comment: "Comprei meu primeiro rank e fiquei impressionado com a qualidade!",
+        status: "APPROVED",
       },
     });
   }
 
-  for (const [key, value] of [["footer_text", "Uma experiência Minecraft criada para aventureiros."], ["link_discord", "#"], ["pix_key", "11912089765"]]) {
-    await db.setting.upsert({ where: { key }, update: {}, create: { key, value } });
+  for (const [key, value] of [["footer_text", "Uma experiência Minecraft criada para aventureiros."], ["link_discord", "#"], ["pix_key", "+5511912089765"]]) {
+    await db.setting.upsert({ where: { key }, update: { value }, create: { key, value } });
   }
 
   const now = Date.now();

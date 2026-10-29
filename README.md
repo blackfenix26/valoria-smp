@@ -4,16 +4,16 @@ Next.js 14 (App Router) · TypeScript · Tailwind · Prisma · Lucide
 ## Rodar localmente
 1. Copie `.env.example` para `.env`
 2. Ajuste `AUTH_SECRET` para uma string forte
-3. Se for usar SQLite local, mantenha `DATABASE_URL="file:./dev.db"`
-4. Instale dependências e rode:
+3. Mantenha `DATABASE_URL="file:./dev.db"` para o banco SQLite local
+4. Instale as dependências e inicie o ambiente:
    `npm install`
-   `npx prisma db push`
-   `npx tsx prisma/seed.ts`
    `npm run dev`
-5. Acesse: http://localhost:3001
+5. O comando de desenvolvimento prepara automaticamente o banco SQLite local sem alterar o schema PostgreSQL usado em produção. Acesse: http://localhost:3000
+
+Para inserir os dados demonstrativos uma única vez, rode `npm run seed` depois de iniciar o ambiente local.
 
 Credenciais padrão do admin:
-- e-mail: frosth@valoria
+- e-mail: frosth@valoria.com
 - senha: fh1626
 
 ## Mapa
@@ -40,6 +40,14 @@ Para publicar em produção real, o projeto já está preparado para um setup Ne
 - a lógica de pedidos está pronta no backend
 - para produção, conecte um gateway real de pagamento (Mercado Pago, Stripe, Pix provider ou outro)
 - ao receber confirmação do pagamento, atualize o pedido para `APPROVED` via webhook/admin
+
+### Resgate de produtos no Minecraft
+- códigos `VLR-XXXXXX` são criados por unidade somente quando o pedido é aprovado
+- configure `MINECRAFT_REDEEM_SECRET` como variável de ambiente forte no host e no plugin; não reutilize o exemplo do `.env.example`
+- o plugin deve chamar `POST /api/redeem` com `Authorization: Bearer <segredo>` e JSON `{ "code": "VLR-ABC234", "playerName": "Jogador" }`
+- sucesso retorna `product.id`, `product.name`, `product.deliveryType` e `product.deliveryInfo`; o plugin executa a entrega configurada para o produto
+- um código usado retorna HTTP `409`; pedidos pendentes ou cancelados não podem ser resgatados
+- a API usa claim atômico, portanto duas chamadas simultâneas não conseguem usar o mesmo código
 
 ### Deploy no Vercel
 1. Conecte o repositório no Vercel

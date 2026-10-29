@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (s?.role !== "ADMIN") redirect("/login?next=/admin");
 
   return (
-    <div className="mx-auto max-w-[1500px] px-4 py-8 lg:px-6">
+    <div className="w-full px-4 py-8 lg:px-8">
       <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-white/10 bg-[#090d13]/90 p-4 shadow-[0_0_35px_rgba(29,78,216,0.12)] md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.28em] text-blue-300/80">Controle operacional</p>
@@ -25,12 +25,23 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             ["Dashboard", "/admin"],
             ["Atualizações", "/admin/atualizacoes"],
             ["Produtos", "/admin/produtos"],
+            ["Organizar VIPs", "/admin/vips"],
+            ["Reinos", "/admin/reinos"],
+            ["Destaque premium dos reinos", "/admin/destaque-reinos"],
+            ["Oportunidades", "/admin/oportunidades"],
+            ["Candidaturas", "/admin/candidaturas"],
+            ["Wiki", "/admin/wiki"],
+            ["FAQ", "/admin/faq"],
             ["Categorias", "/admin/categorias"],
             ["Pedidos", "/admin/pedidos"],
             ["Usuários", "/admin/usuarios"],
             ["Cupons", "/admin/cupons"],
             ["Eventos", "/admin/eventos"],
             ["Banners", "/admin/banners"],
+            ["Patrocinadores", "/admin/patrocinadores"],
+            ["Tópicos do site", "/admin/navegacao"],
+            ["Avaliações", "/admin/avaliacoes"],
+            ["Sugestões de melhoria ADM", "/admin/sugestoes"],
             ["Suporte", "/admin/suporte"],
             ["Configurações", "/admin/configuracoes"],
             ["Logs", "/admin/logs"],

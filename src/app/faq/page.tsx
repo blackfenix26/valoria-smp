@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { db } from "@/lib/db";
+import KnowledgeSearch from "@/components/KnowledgeSearch";
 
 const FAQ = [
   {
@@ -19,7 +21,10 @@ const FAQ = [
   },
 ];
 
-export default function FaqPage() {
+export const dynamic = "force-dynamic";
+export default async function FaqPage() {
+  const items = await db.fAQItem.findMany({where:{active:true},orderBy:[{category:"asc"},{sortOrder:"asc"}]});
+  const entries = items.length ? items.map(item=>({category:item.category,title:item.question,content:item.answer})) : FAQ.map((item,index)=>({category:["Compras","Entrega","Pedidos","Suporte"][index],title:item.q,content:item.a}));
   return (
     <main className="page-shell">
       <div className="mb-8">
@@ -27,14 +32,8 @@ export default function FaqPage() {
         <h1 className="section-title mt-3">FAQ da Valoria SMP</h1>
       </div>
 
-      <div className="space-y-4">
-        {FAQ.map((item) => (
-          <div key={item.q} className="glass p-5">
-            <h2 className="text-lg font-bold text-white">{item.q}</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">{item.a}</p>
-          </div>
-        ))}
-      </div>
+      <p className="mb-6 max-w-2xl text-sm text-mut">Encontre respostas rápidas por pergunta ou categoria. Para explicações completas, consulte a Wiki.</p>
+      <KnowledgeSearch entries={entries} faq/>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/wiki" className="btn-o">Voltar para a Wiki</Link>

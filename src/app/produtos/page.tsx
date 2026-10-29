@@ -6,26 +6,25 @@ export default async function Produtos({searchParams:sp}:{searchParams:SP}){
   const where = { active:true, ...(sp.q?{name:{contains:sp.q}}:{}), ...(sp.cat&&sp.cat!=="Todos"?{category:{name:sp.cat}}:{}) };
   const orderBy = sp.sort==="asc"?{price:"asc" as const}:sp.sort==="desc"?{price:"desc" as const}:{createdAt:"desc" as const};
   const [total,list] = await Promise.all([db.product.count({where}), db.product.findMany({where,orderBy,include:{category:true},skip:(page-1)*PER,take:PER})]);
+  const ratingStats = list.length ? await db.review.groupBy({by:["productId"],where:{status:"APPROVED",productId:{in:list.map(product=>product.id)}},_avg:{stars:true},_count:{_all:true}}) : [];
+  const ratedList = list.map(product=>{const stats=ratingStats.find(item=>item.productId===product.id);return {...product,ratingAverage:stats?stats._avg.stars:null,ratingCount:stats?stats._count._all:0}});
   const pages = Math.max(1,Math.ceil(total/PER)), href = (o:Partial<SP>)=>"/produtos?"+new URLSearchParams(Object.entries({...sp,...o}).filter(([,v])=>v) as [string,string][]).toString();
   return <main className="page-shell">
-    <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div>
-        <span className="brand-tag">Loja oficial</span>
-        <h1 className="mt-3 section-title">Produtos SMP</h1>
-      </div>
-      <p className="text-sm text-white/60">{total} itens disponíveis para você.</p>
-    </div>
+    <header className="storefront-hero mb-7 overflow-hidden rounded-3xl border border-white/10 px-5 py-7 sm:px-8 sm:py-9">
+      <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end"><div><span className="brand-tag">Loja oficial</span><h1 className="mt-4 text-3xl font-black sm:text-4xl">Escolha sua próxima vantagem</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-mut">Produtos, combos e recursos para personalizar sua jornada na Valória SMP.</p></div><div className="grid grid-cols-3 gap-2 text-center text-[10px] text-mut sm:gap-3"><div className="rounded-xl border border-white/10 bg-black/20 px-3 py-3"><b className="block text-sm text-white">PIX</b>Pagamento simples</div><div className="rounded-xl border border-white/10 bg-black/20 px-3 py-3"><b className="block text-sm text-white">VIPs</b>Compare combos</div><div className="rounded-xl border border-white/10 bg-black/20 px-3 py-3"><b className="block text-sm text-white">Seguro</b>Entrega após aprovação</div></div></div>
+    </header>
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3"><p className="text-sm text-mut"><b className="text-white">{total}</b> itens encontrados</p><Link href="/vips" className="text-sm font-semibold underline underline-offset-4">Comparar VIPs →</Link></div>
     <div className="glass mb-6 p-3">
       <div className="flex gap-2 overflow-x-auto pb-1">{["Todos",...cats.map(c=>c.name)].map(c=><Link key={c} href={href({cat:c,page:"1"})} className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium ${(sp.cat||"Todos")===c?"border-blue-500 bg-blue-500/20 text-white":"border-white/10 bg-black/20 text-white/70 hover:text-white"}`}>{c}</Link>)}</div>
     </div>
-    <form className="mb-6 flex flex-col gap-3 lg:flex-row">
+    <form className="storefront-filters mb-7 flex flex-col gap-3 rounded-2xl border border-white/10 bg-card/70 p-3 lg:flex-row lg:items-center">
       <div className="flex flex-1 gap-3">
-        <input name="q" defaultValue={sp.q} placeholder="Pesquisar por nome do produto..." className="inp max-w-sm"/>{sp.cat&&<input type="hidden" name="cat" value={sp.cat}/>}
+        <label className="sr-only" htmlFor="product-search">Pesquisar produtos</label><input id="product-search" name="q" defaultValue={sp.q} placeholder="Pesquisar por nome do produto..." className="inp max-w-none"/>{sp.cat&&<input type="hidden" name="cat" value={sp.cat}/>}
       </div>
       <select name="sort" defaultValue={sp.sort||"new"} className="inp w-full lg:w-44"><option value="new">Mais recentes</option><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select>
       <button className="btn-p">Filtrar</button>
     </form>
-    {list.length?<div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">{list.map(p=><ProductCard key={p.id} p={p}/>)}</div>:<div className="glass p-8 text-center text-white/70">Nenhum produto encontrado. Tente outra categoria ou termo.</div>}
+    {list.length?<div className="grid grid-cols-1 gap-5 min-[430px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">{ratedList.map(p=><ProductCard key={p.id} p={p}/>)}</div>:<div className="storefront-empty rounded-2xl border border-dashed border-white/20 p-10 text-center"><p className="text-lg font-semibold">Nenhum produto encontrado</p><p className="mt-2 text-sm text-mut">Tente outra categoria ou pesquise por um nome diferente.</p><Link href="/produtos" className="btn-o mt-5 inline-flex">Limpar filtros</Link></div>}
     <div className="mt-6 flex flex-col gap-3 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between"><span>Página {page} de {pages} • {total} produtos</span><div className="flex gap-2">{page>1&&<Link className="btn-o !py-1" href={href({page:String(page-1)})}>‹ Anterior</Link>}{page<pages&&<Link className="btn-o !py-1" href={href({page:String(page+1)})}>Próxima ›</Link>}</div></div>
   </main>;
 }
