@@ -84,20 +84,19 @@ export default async function Admin() {
           <h1 className="mt-1 text-2xl font-bold">Painel de operação</h1>
           <p className="mt-1 text-sm text-mut">Acompanhe filas importantes e atividade recente da loja.</p>
         </div>
-        <a href="/" target="_blank" rel="noreferrer" className="btn-o min-h-11 inline-flex items-center justify-center">Abrir loja</a>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
-          <a key={metric.label} href={metric.href} className="min-w-0 rounded-xl border border-white/10 bg-card p-4 transition hover:border-white/25 hover:bg-white/[0.06]">
-            <p className="truncate text-xs text-mut">{metric.label}</p>
-            <p className="mt-2 truncate text-xl font-black">{metric.value}</p>
+          <a key={metric.label} href={metric.href} className="admin-metric-card min-w-0 rounded-2xl border border-white/10 bg-card p-4 transition hover:border-white/25 hover:bg-white/[0.06] sm:p-5">
+            <p className="truncate text-[10px] font-bold uppercase tracking-[.13em] text-mut">{metric.label}</p>
+            <p className="mt-3 truncate text-2xl font-black tabular-nums">{metric.value}</p>
             <p className="mt-1 truncate text-[11px] text-mut">{metric.detail}</p>
           </a>
         ))}
       </div>
 
-      <section className="mt-6 rounded-xl border border-white/10 bg-card p-4 sm:p-5">
+      <section className="admin-dashboard-section mt-6 rounded-2xl border border-white/10 bg-card p-4 sm:p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="font-semibold">Precisa de atenção</h2>
@@ -107,7 +106,7 @@ export default async function Admin() {
         </div>
         <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {queues.map((item) => (
-            <a key={item.label} href={item.href} className="flex min-h-16 items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 transition hover:border-white/25 hover:bg-white/[0.06]">
+            <a key={item.label} href={item.href} className="admin-queue-card flex min-h-16 items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 transition hover:border-white/25 hover:bg-white/[0.06]">
               <span className="text-sm leading-snug text-white/75">{item.label}</span>
               <span className={`text-xl font-black tabular-nums ${item.tone}`}>{item.value}</span>
             </a>
@@ -116,7 +115,7 @@ export default async function Admin() {
       </section>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
-        <section className="min-w-0 rounded-xl border border-white/10 bg-card p-4 sm:p-5">
+        <section className="admin-dashboard-section min-w-0 rounded-2xl border border-white/10 bg-card p-4 sm:p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <h2 className="font-semibold">Vendas nos últimos 7 dias</h2>
@@ -140,7 +139,7 @@ export default async function Admin() {
           </div>
         </section>
 
-        <section className="min-w-0 rounded-xl border border-white/10 bg-card p-4 sm:p-5">
+        <section className="admin-dashboard-section min-w-0 rounded-2xl border border-white/10 bg-card p-4 sm:p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <h2 className="font-semibold">Pedidos recentes</h2>
@@ -167,7 +166,7 @@ export default async function Admin() {
         </section>
       </div>
 
-      <section className="mt-4 rounded-xl border border-white/10 bg-card p-4 sm:p-5">
+      <section className="admin-dashboard-section mt-4 rounded-2xl border border-white/10 bg-card p-4 sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
             <h2 className="font-semibold">Mais vendidos</h2>

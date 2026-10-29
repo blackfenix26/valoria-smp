@@ -28,5 +28,5 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: file:./dev.db
-          AUTH_SECRET: ci-secret-change-me
+          AUTH_SECRET: valoria-ci-build-signing-key-not-used-in-production-2026
           NEXT_PUBLIC_APP_URL: https://example.vercel.app

@@ -1,4 +1,9 @@
-import { NextResponse } from "next/server"; import { db, getSettings } from "@/lib/db"; import { getSession } from "@/lib/auth"; import { calculateTotal, normalizePixPhoneKey } from "@/lib/checkout";
+import { randomUUID } from "node:crypto";
+import { NextResponse } from "next/server";
+import { db, getSettings } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { calculateTotal, normalizePixPhoneKey } from "@/lib/checkout";
+import { readJsonBody } from "@/lib/request-body";
 
 const pixField = (id: string, value: string) => `${id}${String(value.length).padStart(2, "0")}${value}`;
 const crc16 = (payload: string) => {
@@ -18,16 +23,36 @@ const formatPix = (value: number, key: string) => {
 
 export async function POST(req: Request){
   const s = await getSession(); if(!s) return NextResponse.json({error:"Entre na sua conta para finalizar."},{status:401});
-  const body = await req.json() as { ids?: string[]; items?: { id: string; quantity?: number; realmId?: string }[]; coupon?: string; couponPercent?: number };
-  const requestedItems: { id: string; quantity?: number; realmId?: string }[] = Array.isArray(body.items) ? body.items : (Array.isArray(body.ids) ? body.ids.map(id => ({id, quantity: 1})) : []);
+  const parsed = await readJsonBody<{ ids?: unknown; items?: unknown; coupon?: unknown; couponPercent?: unknown }>(req, 32_768);
+  if ("error" in parsed) return NextResponse.json({error:parsed.error==="too_large"?"O carrinho excede o limite permitido.":"JSON inválido."},{status:parsed.error==="too_large"?413:400});
+  const body = parsed.data;
+  if (body.items !== undefined && !Array.isArray(body.items)) return NextResponse.json({error:"Formato de carrinho inválido."},{status:400});
+  if (body.ids !== undefined && !Array.isArray(body.ids)) return NextResponse.json({error:"Formato de carrinho inválido."},{status:400});
+  const incoming = Array.isArray(body.items) ? body.items : Array.isArray(body.ids) ? body.ids.map(id=>({id,quantity:1})) : [];
+  if (!incoming.length || incoming.length > 50) return NextResponse.json({error:incoming.length?"O carrinho pode conter até 50 itens diferentes.":"Carrinho vazio."},{status:400});
+  const typedItems: {id:string;quantity?:number;realmId?:string}[] = [];
+  for (const item of incoming) {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return NextResponse.json({error:"Item de carrinho inválido."},{status:400});
+    const candidate = item as {id?:unknown;quantity?:unknown;realmId?:unknown};
+    if (typeof candidate.id !== "string" || candidate.id.length < 1 || candidate.id.length > 128) return NextResponse.json({error:"Produto inválido no carrinho."},{status:400});
+    if (candidate.realmId !== undefined && (typeof candidate.realmId !== "string" || candidate.realmId.length > 128)) return NextResponse.json({error:"Reino inválido no carrinho."},{status:400});
+    const quantity = candidate.quantity === undefined ? 1 : Number(candidate.quantity);
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 99) return NextResponse.json({error:"A quantidade precisa estar entre 1 e 99."},{status:400});
+    typedItems.push({id:candidate.id,quantity,realmId:candidate.realmId as string|undefined});
+  }
+  if (typeof body.coupon === "string" && body.coupon.length > 40) return NextResponse.json({error:"Cupom inválido."},{status:400});
+  if (body.coupon !== undefined && body.coupon !== null && typeof body.coupon !== "string") return NextResponse.json({error:"Cupom inválido."},{status:400});
+  if (body.couponPercent !== undefined && body.couponPercent !== null && (typeof body.couponPercent !== "number" || !Number.isFinite(body.couponPercent))) return NextResponse.json({error:"Cupom inválido."},{status:400});
+  if (typeof body.coupon === "string" && !/^[A-Za-z0-9_-]{2,40}$/.test(body.coupon)) return NextResponse.json({error:"Cupom inválido."},{status:400});
+  const requestedItems = typedItems;
   const itemMap = new Map<string, { productId: string; quantity: number; realmId?: string }>();
   for(const item of requestedItems){
-    if(typeof item.id !== "string") continue;
-    const realmId=typeof item.realmId==="string"?item.realmId:undefined;
+    const realmId=item.realmId;
     const key=`${item.id}::${realmId||"none"}`;
-    const quantity=Math.min(99,Math.max(1,Math.floor(Number(item.quantity||1))));
+    const quantity=item.quantity ?? 1;
+    if ((itemMap.get(key)?.quantity ?? 0) + quantity > 99) return NextResponse.json({error:"A quantidade máxima por produto é 99."},{status:400});
     const existing=itemMap.get(key);
-    itemMap.set(key,{productId:item.id,quantity:Math.min(99,(existing?.quantity||0)+quantity),realmId});
+    itemMap.set(key,{productId:item.id,quantity:(existing?.quantity||0)+quantity,realmId});
   }
   const requested = [...itemMap.values()];
   const uniqueIds = [...new Set(requested.map(item=>item.productId))];
@@ -55,7 +80,7 @@ export async function POST(req: Request){
     return { productId: entry.productId, price: Number(product.promoPrice ?? product.price), quantity: entry.quantity, realmId: entry.realmId };
   });
 
-  const couponDb = body.coupon ? await db.coupon.findFirst({where:{code:String(body.coupon).toUpperCase(),active:true}}) : null;
+  const couponDb = body.coupon ? await db.coupon.findFirst({where:{code:body.coupon.toUpperCase(),active:true}}) : null;
   if(body.coupon&&(!couponDb||Math.min(100,Math.max(0,couponDb.percent))!==body.couponPercent)) return NextResponse.json({error:"O cupom mudou ou expirou. Valide novamente antes de finalizar."},{status:409});
   const total = calculateTotal(items.map((item) => ({ price: item.price, quantity: item.quantity })), couponDb ? couponDb.percent : 0);
   const order = await db.order.create({
@@ -65,7 +90,7 @@ export async function POST(req: Request){
       status: "PENDING",
       payment: "PIX",
       paymentStatus: "PENDING",
-      paymentReference: `VALORIA-${Date.now()}`,
+      paymentReference: `VALORIA-${randomUUID()}`,
       pixCode: formatPix(total, settings.pix_key),
       items: { create: items.map((item) => ({ productId: item.productId, price: item.price, quantity: item.quantity, realmId: item.realmId })) }
     }

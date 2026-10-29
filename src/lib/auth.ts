@@ -1,6 +1,8 @@
-import { SignJWT, jwtVerify } from "jose"; import { cookies } from "next/headers";
-const FALLBACK_AUTH_SECRET = "valoria-smp-fallback-secret-2026-change-me";
-const secret = (process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || FALLBACK_AUTH_SECRET).trim();
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
+import { db } from "@/lib/db";
+import { getSessionSecret } from "@/lib/session-secret";
+const secret = getSessionSecret();
 const key = new TextEncoder().encode(secret);
 export type Session = { id: string; role: "USER" | "ADMIN" };
 export async function createSession(s: Session){
@@ -9,6 +11,18 @@ export async function createSession(s: Session){
 }
 export async function getSession(): Promise<Session|null>{
   const t = cookies().get("session")?.value; if(!t) return null;
-  try{ return (await jwtVerify(t,key)).payload as unknown as Session }catch{ return null }
+  let payload;
+  try{
+    payload = (await jwtVerify(t,key)).payload;
+  }catch{ return null }
+  if(typeof payload.sub !== "string" && typeof payload.id !== "string") return null;
+  const userId = typeof payload.id === "string" ? payload.id : payload.sub as string;
+  const user = await db.user.findUnique({where:{id:userId},select:{id:true,role:true,active:true}});
+  if(!user?.active || (user.role !== "ADMIN" && user.role !== "USER")) return null;
+  return {id:user.id,role:user.role};
 }
-export async function requireAdmin(){ const s = await getSession(); if(!s || s.role!=="ADMIN") throw new Error("forbidden"); return s }
+export async function requireAdmin(){
+  const s = await getSession();
+  if(!s || s.role!=="ADMIN") throw new Error("forbidden");
+  return s;
+}
