@@ -419,3 +419,76 @@ input,select,textarea{accent-color:#3b82f6}
 [data-theme="light"] .admin-dashboard-section,[data-theme="light"] .admin-metric-card{background:#fff;border-color:rgba(15,23,42,.1);box-shadow:0 12px 32px rgba(15,23,42,.05)}
 @media(max-width:767px){.site-footer{margin-bottom:0}.mobile-store-row+.mobile-store-row{padding-top:2px}}
 @media(max-width:767px){.site-account-anchor{position:static}.site-account-menu{position:absolute;top:calc(100% + 8px);right:12px;width:min(15rem,calc(100vw - 24px));margin-top:0}}
+
+:root{color-scheme:dark;--theme-page:#080b12;--theme-text:#f5f7fb;--theme-muted:#aab5c5;--theme-card:rgba(16,21,34,.88);--theme-surface:rgba(10,13,20,.96);--theme-border:rgba(148,163,184,.16)}
+[data-theme="light"]{color-scheme:light;--theme-page:#f3f6fc;--theme-text:#172033;--theme-muted:#526179;--theme-card:rgba(255,255,255,.96);--theme-surface:#eaf0f8;--theme-border:rgba(51,65,85,.16)}
+[data-theme="light"] body{color:var(--theme-text)}
+[data-theme="light"] .text-mut,[data-theme="light"] [class*="text-white/"]{color:var(--theme-muted)!important}
+[data-theme="light"] [class*="bg-card/"]{background-color:var(--theme-card)!important}
+[data-theme="light"] [class*="bg-surf/"]{background-color:var(--theme-surface)!important}
+[data-theme="light"] .bg-card{background-color:var(--theme-card)!important}
+[data-theme="light"] .bg-surf{background-color:var(--theme-surface)!important}
+[data-theme="light"] [class*="text-blue-200"],[data-theme="light"] [class*="text-blue-300"],[data-theme="light"] [class*="text-sky-200"],[data-theme="light"] [class*="text-sky-300"]{color:#1d4ed8!important}
+[data-theme="light"] [class*="text-violet-200"],[data-theme="light"] [class*="text-violet-300"],[data-theme="light"] [class*="text-purple-200"],[data-theme="light"] [class*="text-purple-300"]{color:#6d28d9!important}
+[data-theme="light"] [class*="text-emerald-200"],[data-theme="light"] [class*="text-emerald-300"],[data-theme="light"] [class*="text-green-200"],[data-theme="light"] [class*="text-green-300"]{color:#047857!important}
+[data-theme="light"] [class*="text-cyan-200"],[data-theme="light"] [class*="text-cyan-300"]{color:#0e7490!important}
+[data-theme="light"] [class*="text-red-200"],[data-theme="light"] [class*="text-red-300"]{color:#b91c1c!important}
+[data-theme="light"] [class*="text-amber-200"],[data-theme="light"] [class*="text-amber-300"],[data-theme="light"] [class*="text-yellow-200"],[data-theme="light"] [class*="text-yellow-300"]{color:#a16207!important}
+[data-theme="light"] .home-hero [class*="text-blue-300"],[data-theme="light"] .home-hero [class*="text-violet-300"],[data-theme="light"] .auth-story [class*="text-blue-300"],[data-theme="light"] .auth-story [class*="text-violet-300"]{color:#bfdbfe!important}
+[data-theme="light"] .workspace-banner-icon [class*="text-blue-200"],[data-theme="light"] .workspace-banner-icon [class*="text-blue-300"]{color:#1d4ed8!important}
+[data-theme="light"] .site-header .text-mut,[data-theme="light"] .site-header [class*="text-white/"]{color:#526179!important}
+[data-theme="light"] .site-header .site-brand-name{color:#172033!important}
+[data-theme="light"] .site-header .mobile-nav-panel{color:#172033}
+[data-theme="light"] .site-header .mobile-nav-panel input{color:#172033}
+[data-theme="light"] .site-header .mobile-nav-panel input::placeholder{color:#64748b!important}
+[data-theme="light"] .site-account-menu .text-blue-300{color:#1d4ed8!important}
+[data-theme="light"] .auth-panel .inp::placeholder{color:#64748b!important}
+[data-theme="light"] .client-metric{border-color:color-mix(in srgb,var(--metric-accent,#2563eb) 25%,rgba(15,23,42,.12));background:linear-gradient(145deg,color-mix(in srgb,var(--metric-accent,#2563eb) 5%,#fff),#fff)}
+.client-metric:nth-child(4n+1){--metric-accent:#3b82f6}.client-metric:nth-child(4n+2){--metric-accent:#8b5cf6}.client-metric:nth-child(4n+3){--metric-accent:#10b981}.client-metric:nth-child(4n){--metric-accent:#f59e0b}
+.client-metric{border-top:2px solid color-mix(in srgb,var(--metric-accent,#60a5fa) 58%,transparent)}
+:root:not([data-theme="light"]) .admin-metric-card:nth-child(4n+1){border-top:2px solid #60a5fa;background:linear-gradient(145deg,rgba(30,58,138,.18),rgba(10,15,25,.92))}
+:root:not([data-theme="light"]) .admin-metric-card:nth-child(4n+2){border-top:2px solid #a78bfa;background:linear-gradient(145deg,rgba(91,33,182,.18),rgba(10,15,25,.92))}
+:root:not([data-theme="light"]) .admin-metric-card:nth-child(4n+3){border-top:2px solid #34d399;background:linear-gradient(145deg,rgba(6,95,70,.18),rgba(10,15,25,.92))}
+:root:not([data-theme="light"]) .admin-metric-card:nth-child(4n){border-top:2px solid #fbbf24;background:linear-gradient(145deg,rgba(120,53,15,.2),rgba(10,15,25,.92))}
+:root:not([data-theme="light"]) .realm-card{border-left:3px solid color-mix(in srgb,var(--realm-accent,#60a5fa) 68%,transparent)}
+:root:not([data-theme="light"]) .vip-plan{border-top:2px solid rgba(167,139,250,.34)}
+[data-theme="light"] .feature-card,[data-theme="light"] .home-discovery{border-color:color-mix(in srgb,var(--tile-accent,#3b82f6) 35%,rgba(15,23,42,.12));background:linear-gradient(145deg,color-mix(in srgb,var(--tile-accent,#3b82f6) 9%,#fff),#fff)!important}
+[data-theme="light"] .feature-card::before,[data-theme="light"] .home-discovery::before{background:radial-gradient(ellipse at 86% 12%,color-mix(in srgb,var(--tile-accent,#3b82f6) 10%,transparent),transparent 52%),linear-gradient(145deg,#fff,#f8fafc 76%)}
+[data-theme="light"] .feature-card h2,[data-theme="light"] .home-discovery h3{color:#172033}
+[data-theme="light"] .feature-card:hover .feature-card-link,[data-theme="light"] .home-discovery:hover .home-discovery-link{color:color-mix(in srgb,var(--tile-accent,#2563eb) 78%,#172033)}
+[data-theme="light"] .feature-card p,[data-theme="light"] .home-discovery p{color:#526179}
+[data-theme="light"] .feature-card .section-kicker,[data-theme="light"] .home-discovery .section-kicker{color:color-mix(in srgb,var(--tile-accent,#2563eb) 72%,#172033)}
+[data-theme="light"] .feature-card-index{color:#526179}
+[data-theme="light"] .feature-card-index span{color:var(--tile-accent,#2563eb)}
+[data-theme="light"] .feature-card-icon,[data-theme="light"] .home-discovery-icon{background:color-mix(in srgb,var(--tile-accent,#2563eb) 12%,white);color:color-mix(in srgb,var(--tile-accent,#2563eb) 82%,#172033);box-shadow:none}
+[data-theme="light"] .quick-access-card{background:linear-gradient(145deg,color-mix(in srgb,var(--tile-accent,#3b82f6) 10%,#fff),#fff 78%);border-color:color-mix(in srgb,var(--tile-accent,#3b82f6) 34%,rgba(15,23,42,.12))}
+[data-theme="light"] .quick-access-card::before{background:radial-gradient(circle at top right,color-mix(in srgb,var(--tile-accent,#3b82f6) 15%,transparent),transparent 48%)}
+[data-theme="light"] .quick-access-icon{background:color-mix(in srgb,var(--tile-accent,#2563eb) 12%,white);color:color-mix(in srgb,var(--tile-accent,#2563eb) 82%,#172033);border-color:color-mix(in srgb,var(--tile-accent,#2563eb) 28%,transparent);box-shadow:none}
+[data-theme="light"] .quick-access-card .section-kicker{color:color-mix(in srgb,var(--tile-accent,#2563eb) 72%,#172033)}
+[data-theme="light"] .stat-pill:nth-child(1){border-color:rgba(59,130,246,.24);background:linear-gradient(135deg,#eff6ff,#fff)}
+[data-theme="light"] .stat-pill:nth-child(2){border-color:rgba(139,92,246,.24);background:linear-gradient(135deg,#f5f3ff,#fff)}
+[data-theme="light"] .stat-pill:nth-child(3){border-color:rgba(16,185,129,.24);background:linear-gradient(135deg,#ecfdf5,#fff)}
+[data-theme="light"] .realm-card{border-left:3px solid color-mix(in srgb,var(--realm-accent,#3b82f6) 70%,white)!important}
+[data-theme="light"] .vip-plan{border-top:2px solid rgba(139,92,246,.34)}
+[data-theme="light"] .vip-plan-featured,[data-theme="light"] .vip-card-featured{background:linear-gradient(155deg,#f5f3ff,#fff 48%)!important}
+[data-theme="light"] .vip-plan-divider{background:linear-gradient(90deg,transparent,rgba(99,102,241,.3),transparent)}
+[data-theme="light"] .vip-benefit{border-color:rgba(99,102,241,.15);background:#f5f7ff}
+[data-theme="light"] .admin-metric-card:nth-child(4n+1){border-top:2px solid #3b82f6;background:linear-gradient(145deg,#eff6ff,#fff 72%)}
+[data-theme="light"] .admin-metric-card:nth-child(4n+2){border-top:2px solid #8b5cf6;background:linear-gradient(145deg,#f5f3ff,#fff 72%)}
+[data-theme="light"] .admin-metric-card:nth-child(4n+3){border-top:2px solid #10b981;background:linear-gradient(145deg,#ecfdf5,#fff 72%)}
+[data-theme="light"] .admin-metric-card:nth-child(4n){border-top:2px solid #f59e0b;background:linear-gradient(145deg,#fffbeb,#fff 72%)}
+[data-theme="light"] .admin-quick-stat-amber{border-color:rgba(217,119,6,.22);background:linear-gradient(135deg,#fff7ed,#fffbeb)}
+[data-theme="light"] .admin-quick-stat-sky{border-color:rgba(2,132,199,.2);background:linear-gradient(135deg,#f0f9ff,#eff6ff)}
+[data-theme="light"] .admin-quick-stat-emerald{border-color:rgba(5,150,105,.2);background:linear-gradient(135deg,#ecfdf5,#f0fdfa)}
+[data-theme="light"] .admin-quick-stat-violet{border-color:rgba(124,58,237,.2);background:linear-gradient(135deg,#f5f3ff,#faf5ff)}
+[data-theme="light"] .admin-dashboard-section{border-color:rgba(51,65,85,.14)}
+[data-theme="light"] .admin-sales-chart-track{background-color:#f1f5f9}
+[data-theme="light"] .product-card .product-category-pill{color:color-mix(in srgb,var(--product-accent,#2563eb) 78%,#172033)}
+[data-theme="light"] .product-card .product-category-pill{background:color-mix(in srgb,var(--product-accent,#2563eb) 10%,white)}
+[data-theme="light"] .storefront-filters{background:linear-gradient(110deg,#fff,#f3f7ff);border-color:rgba(59,130,246,.16)}
+[data-theme="light"] .storefront-empty{background:linear-gradient(145deg,#eff6ff,#fff 60%,#f5f3ff);border-color:rgba(99,102,241,.24)}
+[data-theme="light"] .site-footer{border-color:rgba(59,130,246,.18);background:linear-gradient(135deg,#eaf1fb,#f3f0ff 55%,#e9f8f2)}
+[data-theme="light"] .site-footer .text-mut{color:#475569!important}
+[data-theme="light"] .site-footer a:hover{color:#1d4ed8}
+[data-theme="light"] .btn-o{background:linear-gradient(110deg,#eff6ff,#f5f3ff)!important;color:#1e3a8a!important;border-color:rgba(79,70,229,.32)!important}
+[data-theme="light"] .btn-o:hover{background:linear-gradient(110deg,#dbeafe,#ede9fe)!important}
