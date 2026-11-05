@@ -492,3 +492,6 @@ input,select,textarea{accent-color:#3b82f6}
 [data-theme="light"] .site-footer a:hover{color:#1d4ed8}
 [data-theme="light"] .btn-o{background:linear-gradient(110deg,#eff6ff,#f5f3ff)!important;color:#1e3a8a!important;border-color:rgba(79,70,229,.32)!important}
 [data-theme="light"] .btn-o:hover{background:linear-gradient(110deg,#dbeafe,#ede9fe)!important}
+[data-theme="light"] .auth-story{color:#f8fafc}
+[data-theme="light"] .auth-story [class*="text-white"],[data-theme="light"] .auth-story h1{color:#f8fafc!important}
+[data-theme="light"] .auth-story [class*="text-white/70"],[data-theme="light"] .auth-story [class*="text-white/60"]{color:rgba(248,250,252,.78)!important}
