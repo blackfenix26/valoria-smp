@@ -35,8 +35,8 @@ export default async function Header(){
       <nav className="hidden gap-5 text-sm font-medium text-white/70 xl:flex">{nav.map(([l,h])=><Link key={l} href={h} className="nav-link transition hover:text-white">{l}</Link>)}</nav>
       <div className="flex-1"/>
       <form action="/produtos" className="header-search hidden max-w-[240px] flex-1 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm 2xl:flex"><Search size={15} className="text-blue-300"/><input name="q" placeholder="Buscar produto..." aria-label="Buscar produto" className="w-full bg-transparent outline-none placeholder:text-white/40"/></form>
-      <details className="relative"><summary aria-label="Área do cliente" className="grid h-11 w-11 cursor-pointer list-none place-items-center rounded-xl text-sm text-white/80 transition hover:bg-white/10"><User size={18}/><span className="sr-only">Área do Cliente</span></summary>
-        <div className="absolute right-0 mt-3 w-60 rounded-2xl border border-white/10 bg-card/95 p-2 text-sm shadow-2xl backdrop-blur-xl">
+      <details className="site-account-anchor relative"><summary aria-label="Área do cliente" className="grid h-11 w-11 cursor-pointer list-none place-items-center rounded-xl text-sm text-white/80 transition hover:bg-white/10"><User size={18}/><span className="sr-only">Área do Cliente</span></summary>
+        <div className="site-account-menu absolute right-0 mt-3 w-60 rounded-2xl border p-2 text-sm backdrop-blur-xl">
           {!s && <><Link className="block rounded-xl p-3 hover:bg-white/5" href="/login">Entrar</Link><Link className="block rounded-xl p-3 hover:bg-white/5" href="/login?tab=registro">Criar conta</Link></>}
           {s && <Link className="block rounded-xl p-3 hover:bg-white/5" href="/cliente">Meu painel</Link>}
           {s?.role==="ADMIN" && <Link className="block rounded-xl p-3 text-blue-300 hover:bg-white/5" href="/admin">Área administrativa</Link>}

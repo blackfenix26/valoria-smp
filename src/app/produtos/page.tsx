@@ -1,14 +1,26 @@
-import Link from "next/link"; import { db } from "@/lib/db"; import ProductCard from "@/components/ProductCard";
+import Link from "next/link"; import { db } from "@/lib/db"; import ProductCard from "@/components/ProductCard"; import { getStoreCategoryOrder } from "@/lib/store-category-order";
 export const dynamic = "force-dynamic"; const PER = 12;
 type SP = { q?:string; cat?:string; sort?:string; page?:string };
 export default async function Produtos({searchParams}:{searchParams:Promise<SP>}){
   const sp = await searchParams;
-  const page = Math.max(1,Number(sp.page)||1), cats = await db.category.findMany({orderBy:{name:"asc"}});
+  const page = Math.max(1,Number(sp.page)||1);
+  const [categories, savedOrder] = await Promise.all([
+    db.category.findMany({ select: { id: true, name: true } }),
+    db.setting.findUnique({ where: { key: "store_category_order" }, select: { value: true } }),
+  ]);
+  const cats = getStoreCategoryOrder(categories, savedOrder?.value);
   const where = { active:true, ...(sp.q?{name:{contains:sp.q}}:{}), ...(sp.cat&&sp.cat!=="Todos"?{category:{name:sp.cat}}:{}) };
   const orderBy = sp.sort==="asc"?{price:"asc" as const}:sp.sort==="desc"?{price:"desc" as const}:{createdAt:"desc" as const};
-  const [total,list] = await Promise.all([db.product.count({where}), db.product.findMany({where,orderBy,include:{category:true},skip:(page-1)*PER,take:PER})]);
-  const ratingStats = list.length ? await db.review.groupBy({by:["productId"],where:{status:"APPROVED",productId:{in:list.map(product=>product.id)}},_avg:{stars:true},_count:{_all:true}}) : [];
+  const [total,list,featuredList] = await Promise.all([
+    db.product.count({where}),
+    db.product.findMany({where,orderBy,include:{category:true},skip:(page-1)*PER,take:PER}),
+    db.product.findMany({where:{...where,featured:true},orderBy:{createdAt:"desc"},include:{category:true},take:8}),
+  ]);
+  const productsForRatings = [...new Map([...list,...featuredList].map(product=>[product.id,product])).values()];
+  const ratingStats = productsForRatings.length ? await db.review.groupBy({by:["productId"],where:{status:"APPROVED",productId:{in:productsForRatings.map(product=>product.id)}},_avg:{stars:true},_count:{_all:true}}) : [];
   const ratedList = list.map(product=>{const stats=ratingStats.find(item=>item.productId===product.id);return {...product,ratingAverage:stats?stats._avg.stars:null,ratingCount:stats?stats._count._all:0}});
+  const ratedFeaturedList = featuredList.map(product=>{const stats=ratingStats.find(item=>item.productId===product.id);return {...product,ratingAverage:stats?stats._avg.stars:null,ratingCount:stats?stats._count._all:0}});
+  const categoryRows = cats.map(category=>({category,products:ratedList.filter(product=>product.categoryId===category.id)})).filter(row=>row.products.length>0);
   const pages = Math.max(1,Math.ceil(total/PER)), href = (o:Partial<SP>)=>"/produtos?"+new URLSearchParams(Object.entries({...sp,...o}).filter(([,v])=>v) as [string,string][]).toString();
   return <main className="page-shell">
     <header className="storefront-hero mb-7 overflow-hidden rounded-3xl border border-white/10 px-5 py-7 sm:px-8 sm:py-9">
@@ -25,7 +37,19 @@ export default async function Produtos({searchParams}:{searchParams:Promise<SP>}
       <label className="sr-only" htmlFor="product-sort">Ordenar produtos</label><select id="product-sort" name="sort" defaultValue={sp.sort||"new"} className="inp w-full lg:w-48"><option value="new">Mais recentes</option><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select>
       <button className="btn-p min-h-11">Aplicar filtros</button>
     </form>
-    {list.length?<div className="product-grid grid grid-cols-1 gap-5 min-[430px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">{ratedList.map((p,index)=><ProductCard key={p.id} p={p} index={index}/>)}</div>:<div className="storefront-empty rounded-2xl border border-dashed border-white/20 p-10 text-center"><p className="text-lg font-semibold">Nenhum produto encontrado</p><p className="mt-2 text-sm text-mut">Tente outra categoria ou pesquise por um nome diferente.</p><Link href="/produtos" className="btn-o mt-5 inline-flex">Limpar filtros</Link></div>}
+    {list.length ? <>
+      <div className="hidden product-grid grid-cols-1 gap-5 min-[430px]:grid-cols-2 md:grid md:grid-cols-3 xl:grid-cols-4">{ratedList.map((p,index)=><ProductCard key={p.id} p={p} index={index}/>)}</div>
+      <div className="mobile-store-rows md:hidden">
+        {categoryRows.map(({category,products})=><section key={category.id} className="mobile-store-row">
+          <div className="mobile-store-row-heading"><div><p className="section-kicker">Linha de produtos</p><h2>{category.name}</h2></div><Link href={`/produtos?cat=${encodeURIComponent(category.name)}`} aria-label={`Ver todos os produtos de ${category.name}`} className="mobile-store-row-more">Ver linha →</Link></div>
+          <div className="mobile-product-rail">{products.map((product,index)=><ProductCard key={product.id} p={product} index={index}/>)}</div>
+        </section>)}
+        {ratedFeaturedList.length>0&&<section className="mobile-store-row mobile-featured-row">
+          <div className="mobile-store-row-heading"><div><p className="section-kicker">Seleção da Valoria</p><h2>Destaques</h2></div><Link href="/produtos?sort=new" aria-label="Ver catálogo completo" className="mobile-store-row-more">Explorar loja →</Link></div>
+          <div className="mobile-product-rail">{ratedFeaturedList.map((product,index)=><ProductCard key={product.id} p={product} index={index}/>)}</div>
+        </section>}
+      </div>
+    </> : <div className="storefront-empty rounded-2xl border border-dashed border-white/20 p-10 text-center"><p className="text-lg font-semibold">Nenhum produto encontrado</p><p className="mt-2 text-sm text-mut">Tente outra categoria ou pesquise por um nome diferente.</p><Link href="/produtos" className="btn-o mt-5 inline-flex">Limpar filtros</Link></div>}
     {total>0&&<nav aria-label="Paginação de produtos" className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-5 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between"><span>Página {page} de {pages} <span className="text-white/25">·</span> {total} {total===1?"produto":"produtos"}</span><div className="flex gap-2">{page>1&&<Link className="btn-o !py-1" href={href({page:String(page-1)})}>‹ Anterior</Link>}{page<pages&&<Link className="btn-o !py-1" href={href({page:String(page+1)})}>Próxima ›</Link>}</div></nav>}
   </main>;
 }
