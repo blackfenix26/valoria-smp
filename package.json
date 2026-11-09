@@ -3,7 +3,7 @@
  "private": true,
  "scripts": {
   "dev": "node scripts/dev-local.mjs",
-  "build": "prisma generate && node scripts/deploy-migrations.mjs && next build",
+  "build": "prisma generate && node scripts/deploy-schema.mjs && next build",
   "start": "next start",
   "seed": "tsx prisma/seed.ts",
   "setup": "prisma db push && tsx prisma/seed.ts",

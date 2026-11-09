@@ -4,12 +4,12 @@ if (process.env.VERCEL !== "1") process.exit(0);
 
 const result = spawnSync(
   process.platform === "win32" ? "npx.cmd" : "npx",
-  ["prisma", "migrate", "deploy"],
+  ["prisma", "db", "push"],
   { stdio: "inherit", shell: process.platform === "win32" },
 );
 
 if (result.error) {
-  console.error("Failed to apply Prisma migrations:", result.error.message);
+  console.error("Failed to synchronize the Prisma schema:", result.error.message);
   process.exit(1);
 }
 
