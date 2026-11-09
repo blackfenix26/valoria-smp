@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { requireAdmin } from "@/lib/auth";
+import { NextResponse } from "next/server"; import { db } from "@/lib/db"; import { requireEventTeam } from "@/lib/auth";
 import { readJsonBody } from "@/lib/request-body";
-const guard = async () => { try{ return await requireAdmin() }catch{ return null } };
+const guard = async () => { try{ return await requireEventTeam() }catch{ return null } };
 export async function GET(){ if(!await guard()) return NextResponse.json({error:"forbidden"},{status:403});
   return NextResponse.json(await db.update.findMany({orderBy:{createdAt:"desc"}})) }
 export async function POST(req: Request){
@@ -13,7 +13,7 @@ export async function POST(req: Request){
   const content=typeof b.content==="string"?b.content.trim():"";
   const category=typeof b.category==="string"?b.category:"";
   const status=typeof b.status==="string"?b.status:"";
-  const allowedCategories=["EVENTO","NOVIDADE","MANUTENCAO","LOJA","IMPORTANTE"];
+  const allowedCategories=["NOVIDADE","MANUTENCAO","LOJA","IMPORTANTE"];
   const allowedStatuses=["DRAFT","PUBLISHED","SCHEDULED"];
   if(title.length<3||title.length>140||summary.length<3||summary.length>250||!content||content.length>20_000||!allowedCategories.includes(category)||!allowedStatuses.includes(status)) {
     return NextResponse.json({error:"Confira título, resumo, conteúdo, categoria e status da atualização."},{status:400});

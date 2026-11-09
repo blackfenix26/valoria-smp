@@ -25,6 +25,8 @@ model User {
   updates      Update[]
   suggestions  AdminSuggestion[]
   applications JobApplication[]
+  communityPhotos CommunityPhoto[]
+  moderatedCommunityPhotos CommunityPhoto[] @relation("CommunityPhotoModerator")
 }
 
 model Category {
@@ -270,4 +272,20 @@ model FAQItem {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CommunityPhoto {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl     String
+  blobPathname String   @unique
+  caption      String
+  status       String   @default("PENDING")
+  reviewedAt   DateTime?
+  reviewerId   String?
+  reviewer     User?    @relation("CommunityPhotoModerator", fields: [reviewerId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+
+  @@index([status, createdAt])
 }

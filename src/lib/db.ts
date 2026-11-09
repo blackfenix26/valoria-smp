@@ -40,5 +40,5 @@ const DEFAULT_SETTINGS: Record<string,string> = {
 };
 // Atualizações visíveis ao público: publicadas, ou agendadas cuja data já chegou.
 export const publishedUpdates = (take?: number) => db.update.findMany({
-  where:{ OR:[{status:"PUBLISHED"},{status:"SCHEDULED",publishAt:{lte:new Date()}}] }, orderBy:{publishAt:"desc"}, take, include:{author:{select:{name:true}}} });
+  where:{ category:{not:"EVENTO"}, OR:[{status:"PUBLISHED"},{status:"SCHEDULED",publishAt:{lte:new Date()}}] }, orderBy:{publishAt:"desc"}, take, include:{author:{select:{name:true}}} });
 export async function getSettings(){ const rows = await db.setting.findMany(); return { ...DEFAULT_SETTINGS, ...Object.fromEntries(rows.map(r=>[r.key,r.value])) } as Record<string,string>; }

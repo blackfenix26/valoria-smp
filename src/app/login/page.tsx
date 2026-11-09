@@ -36,7 +36,7 @@ function Form() {
         return;
       }
 
-      router.push(searchParams.get("next") || (data.role === "ADMIN" ? "/admin" : "/cliente"));
+      router.push(searchParams.get("next") || (data.role === "USER" ? "/cliente" : "/admin"));
       router.refresh();
     } catch {
       setError("Não foi possível conectar. Tente novamente.");

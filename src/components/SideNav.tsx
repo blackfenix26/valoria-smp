@@ -11,6 +11,7 @@ import {
   TicketPercent,
   CalendarRange,
   ImageIcon,
+  Images,
   Headset,
   Settings,
   FileText,
@@ -44,6 +45,7 @@ const ICONS: Record<string, typeof BarChart3> = {
   Usuários: Users,
   Cupons: TicketPercent,
   Eventos: CalendarRange,
+  Comunidade: Images,
   Banners: ImageIcon,
   Suporte: Headset,
   Configurações: Settings,
@@ -75,7 +77,7 @@ export default function SideNav({ items, eyebrow = "Admin", title = "Painel SMP"
   const isAdmin = items.some(([, href]) => href === "/admin");
   const groups = isAdmin ? [
     { title: "Visão geral", links: visibleItems.filter(([, href]) => href === "/admin") },
-    { title: "Operações", links: visibleItems.filter(([, href]) => ["/admin/pedidos", "/admin/suporte", "/admin/candidaturas", "/admin/avaliacoes", "/admin/sugestoes", "/admin/oportunidades"].includes(href)) },
+    { title: "Operações", links: visibleItems.filter(([, href]) => ["/admin/pedidos", "/admin/suporte", "/admin/candidaturas", "/admin/avaliacoes", "/admin/sugestoes", "/admin/oportunidades", "/admin/comunidade"].includes(href)) },
     { title: "Loja e ofertas", links: visibleItems.filter(([, href]) => ["/admin/produtos", "/admin/categorias", "/admin/vips", "/admin/cupons"].includes(href)) },
     { title: "Mundo Valória", links: visibleItems.filter(([, href]) => ["/admin/reinos", "/admin/destaque-reinos", "/admin/eventos", "/admin/banners", "/admin/patrocinadores"].includes(href)) },
     { title: "Conteúdo", links: visibleItems.filter(([, href]) => ["/admin/atualizacoes", "/admin/wiki", "/admin/faq", "/admin/navegacao"].includes(href)) },

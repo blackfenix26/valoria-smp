@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { createSession } from "@/lib/auth";
 import { readJsonBody } from "@/lib/request-body";
+import { isUserRole } from "@/lib/team-permissions";
 
 export async function POST(request: Request) {
   const parsed = await readJsonBody<{ email?: unknown; password?: unknown }>(request, 2_048);
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
   }
 
   const user = await db.user.findUnique({ where: { email } });
-  if (!user || !user.active || (user.role !== "USER" && user.role !== "ADMIN") || !(await bcrypt.compare(password, user.passwordHash))) {
+  if (!user || !user.active || !isUserRole(user.role) || !(await bcrypt.compare(password, user.passwordHash))) {
     return NextResponse.json({ error: "E-mail ou senha inválidos." }, { status: 401 });
   }
 

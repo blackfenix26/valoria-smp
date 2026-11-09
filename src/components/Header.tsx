@@ -5,7 +5,7 @@ import CartButton from "./CartButton";
 import LogoutButton from "./LogoutButton";
 import ThemeToggle from "./ThemeToggle";
 
-const DEFAULT_NAV: [string, string, boolean][] = [["Início","/",true],["Produtos","/produtos",true],["VIPs","/vips",true],["Planos","/produtos?cat=Ranks",true],["Mercado","/produtos",true],["Reinos","/reinos",true],["Trabalhe Conosco","/trabalhe-conosco",true],["Atualizações","/atualizacoes",true],["Wiki","/wiki",true]];
+const DEFAULT_NAV: [string, string, boolean][] = [["Início","/",true],["Produtos","/produtos",true],["Comunidade","/comunidade",true],["VIPs","/vips",true],["Planos","/produtos?cat=Ranks",true],["Mercado","/produtos",true],["Reinos","/reinos",true],["Trabalhe Conosco","/trabalhe-conosco",true],["Atualizações","/atualizacoes",true],["Wiki","/wiki",true]];
 
 export default async function Header(){
   const s = await getSession();
@@ -13,7 +13,7 @@ export default async function Header(){
   const settings = await getSettings();
   let nav = DEFAULT_NAV;
   try { nav = JSON.parse(settings.site_nav); } catch {}
-  for (const required of [["VIPs", "/vips", true], ["Reinos", "/reinos", true], ["Trabalhe Conosco", "/trabalhe-conosco", true]] as [string, string, boolean][]) {
+  for (const required of [["Comunidade", "/comunidade", true], ["VIPs", "/vips", true], ["Reinos", "/reinos", true], ["Trabalhe Conosco", "/trabalhe-conosco", true]] as [string, string, boolean][]) {
     const existing = nav.find((item) => item[0].toLowerCase() === required[0].toLowerCase() || item[1] === required[1]);
     if (existing) {
       existing[0] = required[0];
@@ -39,7 +39,7 @@ export default async function Header(){
         <div className="site-account-menu absolute right-0 mt-3 w-60 rounded-2xl border p-2 text-sm backdrop-blur-xl">
           {!s && <><Link className="block rounded-xl p-3 hover:bg-white/5" href="/login">Entrar</Link><Link className="block rounded-xl p-3 hover:bg-white/5" href="/login?tab=registro">Criar conta</Link></>}
           {s && <Link className="block rounded-xl p-3 hover:bg-white/5" href="/cliente">Meu painel</Link>}
-          {s?.role==="ADMIN" && <Link className="block rounded-xl p-3 text-blue-300 hover:bg-white/5" href="/admin">Área administrativa</Link>}
+          {s && s.role!=="USER" && <Link className="block rounded-xl p-3 text-blue-300 hover:bg-white/5" href="/admin">{s.role==="ADMIN"?"Área administrativa":"Painel da equipe"}</Link>}
           {s && <LogoutButton className="block w-full rounded-xl p-3 text-left hover:bg-white/5"/>}
         </div>
       </details>

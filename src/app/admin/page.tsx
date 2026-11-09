@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function Admin() {
+  await requireAdmin();
   const day = new Date();
   day.setHours(0, 0, 0, 0);
   const since = new Date(day);

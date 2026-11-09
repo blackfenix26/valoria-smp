@@ -4,7 +4,7 @@ export type Fld = { key:string; label:string; type:"text"|"textarea"|"number"|"b
 export type Filter = { key:string; label:string; options:[string,string][] };
 export type QuickAction = { label:string; value:string; className?:string; confirm?:string; whenStatuses?:string[] };
 const get = (o:any,k:string)=>k.split(".").reduce((a:any,p)=>a?.[p],o);
-const STATUS_LABELS:Record<string,string> = {PENDING:"Pendente",APPROVED:"Aprovado",PROCESSING:"Em andamento",COMPLETED:"Concluído",CANCELED:"Cancelado",OPEN:"Aberto",IN_PROGRESS:"Em atendimento",RESOLVED:"Resolvido",CLOSED:"Fechado",REVIEW:"Em análise",ACCEPTED:"Aceita",REJECTED:"Rejeitada",PLANNED:"Planejada",DONE:"Concluída",ARCHIVED:"Arquivada",ADMIN:"Administrador",USER:"Usuário"};
+const STATUS_LABELS:Record<string,string> = {PENDING:"Pendente",APPROVED:"Aprovado",PROCESSING:"Em andamento",COMPLETED:"Concluído",CANCELED:"Cancelado",OPEN:"Aberto",IN_PROGRESS:"Em atendimento",RESOLVED:"Resolvido",CLOSED:"Fechado",REVIEW:"Em análise",ACCEPTED:"Aceita",REJECTED:"Rejeitada",PLANNED:"Planejada",DONE:"Concluída",ARCHIVED:"Arquivada",ADMIN:"Administrador",EVENTS:"Equipe de eventos",SUPPORT:"Equipe de suporte",USER:"Usuário"};
 const show = (v:any)=>typeof v==="boolean"?(v?"Sim":"Não"):typeof v==="string"&&/^\d{4}-\d\d-\d\dT/.test(v)?new Date(v).toLocaleString("pt-BR"):(v??"—");
 export default function CrudManager({model,title,fields,columns,canCreate=true,canDelete=true,idKey="id",hint,filters=[],quickActions=[],createLabel="Novo"}:{model:string;title:string;fields:Fld[];columns:{key:string;label:string}[];canCreate?:boolean;canDelete?:boolean;idKey?:string;hint?:string;filters?:Filter[];quickActions?:QuickAction[];createLabel?:string}){
   const searchRef = useRef<HTMLInputElement>(null);

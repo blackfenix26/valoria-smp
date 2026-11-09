@@ -1,6 +1,9 @@
-import { NextResponse } from "next/server"; import { Prisma } from "@prisma/client"; import { db } from "@/lib/db"; import { requireAdmin } from "@/lib/auth"; import { MODELS, coerce } from "@/lib/crud"; import { createDeliveryCode } from "@/lib/checkout";
+import { NextResponse } from "next/server"; import { Prisma } from "@prisma/client"; import { db } from "@/lib/db"; import { getSession } from "@/lib/auth"; import { MODELS, coerce } from "@/lib/crud"; import { createDeliveryCode } from "@/lib/checkout"; import { canAccessStaffPath } from "@/lib/team-permissions";
 type Ctx = { params: Promise<{ model: string }> };
-const gate = async () => { try { return await requireAdmin() } catch { return null } };
+const gate = async (model: string) => {
+  const session = await getSession();
+  return session && canAccessStaffPath(session.role, `/api/admin/crud/${model}`) ? session : null;
+};
 const err = (m: string, s: number) => NextResponse.json({ error: m }, { status: s });
 function galleryUrls(value: unknown) {
   const raw = String(value ?? "").trim();
@@ -45,13 +48,16 @@ async function approveOrder(orderId: string) {
 }
 export async function GET(_: Request, { params }: Ctx){
   const { model } = await params;
-  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
+  const c = MODELS[model]; if(!c) return err("not found",404);
+  const s = await gate(model); if(!s) return err("forbidden",403);
   return NextResponse.json(await (db as any)[c.delegate].findMany({ ...(c.order?{orderBy:c.order}:{}), ...(c.include?{include:c.include}:{}), ...(c.select?{select:c.select}:{}) }));
 }
 export async function POST(req: Request, { params }: Ctx){
   const { model } = await params;
-  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c) return err("not found",404);
+  const c = MODELS[model]; if(!c) return err("not found",404);
+  const s = await gate(model); if(!s) return err("forbidden",403);
   const b = await req.json(); const data = coerce(c.fields, b); if(!data) return err("Valores inválidos.",400);
+  if(model==="user"&&data.role!==undefined&&!["USER","SUPPORT","EVENTS","ADMIN"].includes(String(data.role))) return err("Função de usuário inválida.",400);
   if(model === "realm" && String(data.description ?? "").trim().length < 20) return err("A descrição do reino precisa ter pelo menos 20 caracteres.",400);
   if(model === "product"){
     const photos=galleryUrls(data.gallery);
@@ -91,7 +97,9 @@ export async function POST(req: Request, { params }: Ctx){
 }
 export async function DELETE(req: Request, { params }: Ctx){
   const { model } = await params;
-  const s = await gate(); const c = MODELS[model]; if(!s) return err("forbidden",403); if(!c||!c.del) return err("not allowed",405);
+  const c = MODELS[model]; if(!c||!c.del) return err("not allowed",405);
+  const s = await gate(model); if(!s) return err("forbidden",403);
+  if(s.role!=="ADMIN"&&!(s.role==="EVENTS"&&model==="event")) return err("Esta função não pode excluir este registro.",403);
   const b = await req.json(); const id = String(b.id ?? b.key);
   try{
     if(model === "order") {

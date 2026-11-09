@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { getSessionSecret } from "@/lib/session-secret";
+import { canAccessStaffPath, defaultTeamPath } from "@/lib/team-permissions";
 const secret = getSessionSecret();
 const key = new TextEncoder().encode(secret);
 export async function middleware(req: NextRequest) {
@@ -34,11 +35,16 @@ export async function middleware(req: NextRequest) {
     ? NextResponse.json({ error: "forbidden" }, { status: 403 })
     : NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(pathname)}`, req.url));
 
-  if ((pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) && role !== "ADMIN") return deny();
+  if ((pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) && !canAccessStaffPath(role, pathname)) {
+    if (!api && ["SUPPORT", "EVENTS"].includes(role ?? "")) {
+      return NextResponse.redirect(new URL(defaultTeamPath(role), req.url));
+    }
+    return deny();
+  }
   if (pathname.startsWith("/cliente") && !role) return deny();
 
   const response = NextResponse.next();
-  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin") || pathname.startsWith("/cliente")) {
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin") || pathname.startsWith("/api/community/gallery") || pathname.startsWith("/cliente")) {
     response.headers.set("Cache-Control", "private, no-store, max-age=0");
   }
   return response;

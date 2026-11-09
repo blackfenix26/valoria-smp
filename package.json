@@ -3,7 +3,7 @@
  "private": true,
  "scripts": {
   "dev": "node scripts/dev-local.mjs",
-  "build": "prisma generate && next build",
+  "build": "prisma generate && node scripts/deploy-migrations.mjs && next build",
   "start": "next start",
   "seed": "tsx prisma/seed.ts",
   "setup": "prisma db push && tsx prisma/seed.ts",
@@ -11,6 +11,7 @@
  },
  "dependencies": {
   "@prisma/client": "^5.20.0",
+  "@vercel/blob": "2.4.0",
   "bcryptjs": "^2.4.3",
   "jose": "^5.9.0",
   "lucide-react": "^0.453.0",
@@ -23,7 +24,7 @@
   "@types/node": "^20",
   "@types/react": "^18",
   "autoprefixer": "^10",
-  "postcss": "^8",
+  "postcss": "^8.5.32",
   "prisma": "^5.20.0",
   "tailwindcss": "^3.4.0",
   "tsx": "^4.19.0",
@@ -31,5 +32,10 @@
  },
  "prisma": {
   "seed": "tsx prisma/seed.ts"
+ },
+ "overrides": {
+  "postcss": "$postcss",
+  "source-map-js": "^1.2.2",
+  "postcss-selector-parser": "^6.1.5"
  }
 }
