@@ -14,7 +14,7 @@ export default async function Admin() {
   const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const compactBrl = (n: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(n);
 
-  const [prod, ord, usr, sales, week, top, pendingOrders, openTickets, pendingApplications, pendingReviews, pendingServerReviews, recentOrders] = await Promise.all([
+  const [prod, ord, usr, sales, week, top, pendingOrders, openTickets, pendingApplications, pendingReviews, pendingServerReviews, pendingPhotos, recentOrders] = await Promise.all([
     db.product.count({ where: { active: true } }),
     db.order.count({ where: { createdAt: { gte: day } } }),
     db.user.count({ where: { active: true } }),
@@ -38,6 +38,7 @@ export default async function Admin() {
     db.jobApplication.count({ where: { status: "PENDING" } }),
     db.review.count({ where: { status: "PENDING" } }),
     db.serverReview.count({ where: { status: "PENDING" } }),
+    db.communityPhoto.count({ where: { status: "PENDING" } }),
     db.order.findMany({
       orderBy: { createdAt: "desc" },
       take: 6,
@@ -77,6 +78,7 @@ export default async function Admin() {
     { label: "Tickets abertos", value: openTickets, href: "/admin/suporte", tone: "sky", accent: "Atender" },
     { label: "Candidaturas", value: pendingApplications, href: "/admin/candidaturas", tone: "emerald", accent: "Revisar" },
     { label: "Avaliações", value: pendingReviews + pendingServerReviews, href: "/admin/avaliacoes", tone: "violet", accent: "Validar" },
+    { label: "Fotos para aprovar", value: pendingPhotos, href: "/admin/comunidade", tone: "sky", accent: "Moderar" },
   ];
 
   const statusLabels: Record<string, string> = {
