@@ -63,7 +63,7 @@ export default async function Home(){
             <strong>Comprar agora</strong>
           </div>
         </Link>
-        <Link href="/trabalhe-conosco" className="quick-access-card quick-access-community">
+        <Link href="/comunidade" className="quick-access-card quick-access-community">
           <span className="quick-access-icon"><UsersRound size={18}/></span>
           <div>
             <span className="section-kicker">Comunidade</span>

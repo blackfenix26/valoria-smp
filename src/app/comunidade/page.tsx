@@ -28,6 +28,9 @@ export default async function Comunidade() {
         <span className="brand-tag"><Images size={14} /> Espaço da comunidade</span>
         <h1 className="mt-4 text-3xl font-black sm:text-5xl">Comunidade Valoria</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-mut sm:text-base">Novidades, eventos e momentos compartilhados pelos jogadores — tudo em um só lugar.</p>
+        <Link href="/galeria" className="btn-p mt-6 inline-flex min-h-11 items-center gap-2">
+          Abrir galeria pública <ArrowRight size={15} />
+        </Link>
       </div>
     </header>
 
