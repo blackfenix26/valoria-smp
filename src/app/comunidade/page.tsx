@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Camera, Images, Newspaper, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Images, Newspaper, Sparkles } from "lucide-react";
 import { db, publishedUpdates } from "@/lib/db";
-import { getSession } from "@/lib/auth";
 import UpdateCard from "@/components/UpdateCard";
-import CommunityGalleryUpload from "@/components/CommunityGalleryUpload";
 
 export const dynamic = "force-dynamic";
-type SearchParams = { sort?: string; page?: string };
 function safeExternalUrl(value: string) {
   try {
     const url = new URL(value);
@@ -16,27 +13,12 @@ function safeExternalUrl(value: string) {
   }
 }
 
-export default async function Comunidade({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const params = await searchParams;
-  const sort = params.sort === "oldest" ? "asc" : "desc";
-  const requestedPage = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
-  const pageSize = 24;
+export default async function Comunidade() {
   const now = new Date();
-  const [updates, event, totalPhotos, session] = await Promise.all([
+  const [updates, event] = await Promise.all([
     publishedUpdates(3),
     db.event.findFirst({ where: { active: true, endsAt: { gte: now } }, orderBy: [{ startsAt: "asc" }] }),
-    db.communityPhoto.count({ where: { status: "APPROVED" } }),
-    getSession(),
   ]);
-  const totalPages = Math.max(1, Math.ceil(totalPhotos / pageSize));
-  const page = Math.min(requestedPage, totalPages);
-  const photos = await db.communityPhoto.findMany({
-    where: { status: "APPROVED" },
-    orderBy: { createdAt: sort },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-    include: { user: { select: { name: true, username: true } } },
-  });
   const eventLink = event?.link ? safeExternalUrl(event.link) : null;
 
   return <main className="page-shell max-w-7xl">
@@ -66,33 +48,6 @@ export default async function Comunidade({ searchParams }: { searchParams: Promi
         {event?.startsAt && <p className="community-event-date">{new Date(event.startsAt).toLocaleDateString("pt-BR")} – {new Date(event.endsAt).toLocaleDateString("pt-BR")}</p>}
         {eventLink && <a href={eventLink} target="_blank" rel="noreferrer" className="btn-p mt-4 inline-flex min-h-10 items-center gap-2">Saiba mais <ArrowRight size={15} /></a>}
       </div>
-    </section>
-
-    <section className="community-section" aria-labelledby="community-gallery">
-      <div className="community-section-heading">
-        <div><span className="section-kicker"><Camera size={13} /> Feita por vocês</span><h2 id="community-gallery">Galeria da comunidade</h2><p>Fotos enviadas pelos membros e aprovadas pela equipe.</p></div>
-      </div>
-      <CommunityGalleryUpload signedIn={Boolean(session)} />
-      <div className="community-gallery-toolbar">
-        <span>{totalPhotos} {totalPhotos === 1 ? "foto publicada" : "fotos publicadas"} · Página {page} de {totalPages}</span>
-        <div className="community-sort-links" aria-label="Ordenar fotos">
-          <Link href="/comunidade?sort=newest" aria-current={sort === "desc" ? "page" : undefined}>Mais novas</Link>
-          <Link href="/comunidade?sort=oldest" aria-current={sort === "asc" ? "page" : undefined}>Mais antigas</Link>
-        </div>
-      </div>
-      {photos.length ? <div className="community-gallery-grid">
-        {photos.map(photo => <article key={photo.id} className="community-photo-card">
-          <img src={photo.imageUrl} alt={photo.caption || `Foto enviada por ${photo.user.name}`} loading="lazy" />
-          <div className="community-photo-caption">
-            <p>{photo.caption || "Um momento da comunidade"}</p>
-            <span>Por {photo.user.name} · {photo.createdAt.toLocaleDateString("pt-BR")}</span>
-          </div>
-        </article>)}
-      </div> : <div className="community-empty"><Camera size={22} /><p>A galeria ainda está vazia. Envie a primeira foto!</p></div>}
-      {totalPages > 1 && <nav aria-label="Paginação da galeria" className="community-pagination">
-        {page > 1 ? <Link href={`/comunidade?sort=${sort === "asc" ? "oldest" : "newest"}&page=${page - 1}`}>Anterior</Link> : <span aria-disabled="true">Anterior</span>}
-        {page < totalPages ? <Link href={`/comunidade?sort=${sort === "asc" ? "oldest" : "newest"}&page=${page + 1}`}>Próxima</Link> : <span aria-disabled="true">Próxima</span>}
-      </nav>}
     </section>
   </main>;
 }

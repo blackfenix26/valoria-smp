@@ -16,7 +16,7 @@ export default function CommunityGalleryUpload({ signedIn }: { signedIn: boolean
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!signedIn) {
-      window.location.assign("/login?next=/comunidade");
+      window.location.assign("/login?next=/galeria");
       return;
     }
     if (!file || busy) {
@@ -62,7 +62,7 @@ export default function CommunityGalleryUpload({ signedIn }: { signedIn: boolean
             {busy ? "Enviando..." : "Enviar para aprovação"}
           </button>
         </div>
-      ) : <p className="community-signin-note">Entre na sua conta para enviar fotos. <a href="/login?next=/comunidade">Fazer login</a></p>}
+      ) : <p className="community-signin-note">Entre na sua conta para enviar fotos. <a href="/login?next=/galeria">Fazer login</a></p>}
       {error && <p role="alert" className="mt-3 text-sm text-red-500">{error}</p>}
       {message && <p role="status" className="mt-3 text-sm text-emerald-600">{message}</p>}
     </form>

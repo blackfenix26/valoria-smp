@@ -57,6 +57,8 @@ export default async function Footer() {
         <div>
           <h5 className="mb-4 text-xs font-bold tracking-wider text-white">COMUNIDADE</h5>
           <div className="grid gap-2 text-sm text-mut">
+            <Link href="/comunidade" className="transition hover:text-white">Comunidade</Link>
+            <Link href="/galeria" className="transition hover:text-white">Galeria pública</Link>
             {[
               ["link_discord", "Discord"],
               ["link_instagram", "Instagram"],
