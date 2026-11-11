@@ -92,12 +92,20 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Informe a foto e escolha aprovar ou recusar." }, { status: 400, headers: noStore });
   }
 
-  const photo = await db.communityPhoto.findUnique({ where: { id }, select: { id: true, blobPathname: true, status: true } });
+  const photo = await db.communityPhoto.findUnique({
+    where: { id },
+    select: { id: true, blobPathname: true, status: true, reviewedAt: true, reviewerId: true },
+  });
   if (!photo) return NextResponse.json({ error: "Foto não encontrada." }, { status: 404, headers: noStore });
-  if (photo.status !== "PENDING") return NextResponse.json({ error: "Esta foto já foi analisada." }, { status: 409, headers: noStore });
+  if (status === "APPROVED" && photo.status !== "PENDING") {
+    return NextResponse.json({ error: "Somente fotos pendentes podem ser aprovadas." }, { status: 409, headers: noStore });
+  }
+  if (status === "REJECTED" && photo.status === "REJECTED") {
+    return NextResponse.json({ error: "Esta foto já foi recusada." }, { status: 409, headers: noStore });
+  }
 
   const updated = await db.communityPhoto.updateMany({
-    where: { id, status: "PENDING" },
+    where: { id, status: photo.status },
     data: { status, reviewedAt: new Date(), reviewerId: session.id },
   });
   if (updated.count !== 1) return NextResponse.json({ error: "Esta foto já foi analisada por outro membro da equipe." }, { status: 409, headers: noStore });
@@ -108,9 +116,9 @@ export async function PATCH(request: Request) {
     } catch {
       await db.communityPhoto.updateMany({
         where: { id, status: "REJECTED", reviewerId: session.id },
-        data: { status: "PENDING", reviewedAt: null, reviewerId: null },
+        data: { status: photo.status, reviewedAt: photo.reviewedAt, reviewerId: photo.reviewerId },
       });
-      return NextResponse.json({ error: "Não foi possível remover a imagem do armazenamento. A foto voltou para a fila de análise." }, { status: 503, headers: noStore });
+      return NextResponse.json({ error: "Não foi possível remover a imagem do armazenamento. O status da foto foi restaurado." }, { status: 503, headers: noStore });
     }
   }
 
